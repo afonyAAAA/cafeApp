@@ -1,11 +1,12 @@
 ﻿using Avalonia.Controls;
 
-namespace caffeApp.Views;
-
-public partial class MainView : UserControl
+namespace caffeApp.Views
 {
-    public MainView()
+    public partial class MainView : UserControl
     {
-        InitializeComponent();
+        public MainView()
+        {
+            InitializeComponent();
+        }
     }
 }

@@ -8,5 +8,11 @@
         x:Class="caffeApp.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="caffeApp">
-        <views:MainView />
+	
+	<Design.DataContext>
+		<vm:MainViewModel/>
+	</Design.DataContext>
+	
+	<views:AdminView/>
+	
 </Window>

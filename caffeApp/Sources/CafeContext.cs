@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using caffeApp.models;
 using Microsoft.EntityFrameworkCore;
 
-namespace caffeApp;
+namespace caffeApp.Sources;
 
 public partial class CafeContext : DbContext
 {
@@ -23,7 +23,7 @@ public partial class CafeContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        //To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=cafe;Username=postgres;Password=admin123");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -59,7 +59,7 @@ public partial class CafeContext : DbContext
 
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.DocumentId).HasColumnName("document_id");
-            entity.Property(e => e.Firstname)
+            entity.Property(e => e.FirstName)
                 .HasMaxLength(100)
                 .HasColumnName("firstname");
             entity.Property(e => e.SecondName)
