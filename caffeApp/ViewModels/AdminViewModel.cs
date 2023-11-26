@@ -29,7 +29,7 @@ namespace caffeApp.ViewModels
             var listOfUsers = DbContextProvider.GetContext().Users.ToList();
             Users = new ObservableCollection<User>(listOfUsers);
 
-            this.WhenAnyValue(vm => vm).Subscribe(_ => { { UpdateFullName(); }; }) ;
+            this.WhenAnyValue(vm => vm.SelectedUser).
         }
 
         public ObservableCollection<User> Users
