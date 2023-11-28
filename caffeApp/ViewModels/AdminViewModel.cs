@@ -1,5 +1,4 @@
-﻿using caffeApp.models;
-using caffeApp.Sources;
+﻿using caffeApp.Sources;
 using caffeApp.Views;
 using System.Reactive.Linq;
 using ReactiveUI;
@@ -16,7 +15,7 @@ namespace caffeApp.ViewModels
     {
         private ObservableCollection<User> _users;
 
-        public Grid GridSelectedUser = new Grid();
+        public Grid GridSelectedUser => new() ;
 
         private ObservableCollection<Role> _roles;
 
@@ -32,13 +31,10 @@ namespace caffeApp.ViewModels
 
         private Role _userRole;
 
-        private AdminView _adminView;
-
-        public AdminViewModel(AdminView adminView, IScreen screen)
+        public AdminViewModel(IScreen screen)
         {
             Activator = new ViewModelActivator();
 
-            _adminView = adminView;
             _fullName = string.Empty;
             var listOfUsers = DbContextProvider.GetContext().Users.ToList();
             var listOfRoles = DbContextProvider.GetContext().Roles.ToList();
@@ -48,8 +44,6 @@ namespace caffeApp.ViewModels
             this.WhenAnyValue(vm => vm.SelectedUser).Subscribe(UpdateInfoUser);
 
             HostScreen = screen;
-
-            GridSelectedUser.IsVisible = true;
 
             this.WhenActivated((CompositeDisposable disposables) =>
             {
@@ -95,7 +89,7 @@ namespace caffeApp.ViewModels
                 FullName = selectedUser.getFullName();
                 UserRole = role;
 
-                _adminView.grid_selected_user.IsVisible = true;
+                GridSelectedUser.IsVisible = true;
             }
         }
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace caffeApp.models;
+namespace caffeApp;
 
 public partial class User
 {
@@ -24,8 +24,8 @@ public partial class User
 
     public string getFullName()
     {
-        StringBuilder sb = new StringBuilder();
-        sb.Append(FirstName + " " + SecondName + " " + Surname);
-        return sb.ToString();
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.Append(FirstName + " " + SecondName + " " + Surname);
+        return stringBuilder.ToString();
     }
 }

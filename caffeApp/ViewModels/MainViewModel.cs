@@ -32,7 +32,7 @@ public class MainViewModel : ViewModelBase, IScreen
     
 
         GoNext = ReactiveCommand.CreateFromObservable(
-            () => Router.Navigate.Execute(new AdminViewModel(new Views.AdminView(), this))
+            () => Router.Navigate.Execute(new AdminViewModel(this))
         );
     }
 }

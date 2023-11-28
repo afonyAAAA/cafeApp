@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using caffeApp.models;
 using Microsoft.EntityFrameworkCore;
 
 namespace caffeApp.Sources;
@@ -23,8 +22,8 @@ public partial class CafeContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=cafe;Username=postgres;Password=admin123");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=cafe;Username=postgres;Password=postgres");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -57,15 +56,19 @@ public partial class CafeContext : DbContext
 
             entity.ToTable("User");
 
+            entity.HasIndex(e => e.DocumentId, "fk_1");
+
+            entity.HasIndex(e => e.RoleId, "fk_2");
+
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.DocumentId).HasColumnName("document_id");
             entity.Property(e => e.FirstName)
                 .HasMaxLength(100)
                 .HasColumnName("firstname");
+            entity.Property(e => e.RoleId).HasColumnName("role_id");
             entity.Property(e => e.SecondName)
                 .HasMaxLength(100)
-                .HasColumnName("name");
-            entity.Property(e => e.RoleId).HasColumnName("role_id");
+                .HasColumnName("secondname");
             entity.Property(e => e.Surname)
                 .HasMaxLength(100)
                 .HasColumnName("surname");
