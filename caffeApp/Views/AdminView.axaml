@@ -6,15 +6,17 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="caffeApp.Views.AdminView"
 			 x:DataType="vm:AdminViewModel">
-
-
+	
+	
 	<Grid ShowGridLines="True">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 	
-		<Grid ShowGridLines="True">
+		<Grid ShowGridLines="True" 
+			  IsVisible="False"
+			  x:Name="grid_selected_user">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition/>
 				<ColumnDefinition/>
@@ -59,9 +61,19 @@
 				Grid.Row="1"
 				VerticalAlignment="Center"
 				HorizontalAlignment="Left"
-				Text="{Binding FIO}">
+				Text="{Binding FullName}">
+			</TextBlock>
+		
+			<TextBlock
+				Grid.Column="1"
+				Grid.Row="2"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Left"
+				Text="{Binding UserRole.Name}">
 			</TextBlock>
 		</Grid>
+				
+
 
 		<ListBox 
 			x:Name="listBoxUsers"
@@ -110,6 +122,5 @@
 
 	</Grid>
 	
-
-
+	
 </UserControl>
