@@ -8,6 +8,9 @@ using System;
 using Avalonia.Platform;
 using Avalonia.Controls;
 using System.Reactive.Disposables;
+using Avalonia;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Collections.Generic;
 
 namespace caffeApp.ViewModels
 {
@@ -15,15 +18,13 @@ namespace caffeApp.ViewModels
     {
         private ObservableCollection<User> _users;
 
-        public Grid GridSelectedUser => new() ;
-
         private ObservableCollection<Role> _roles;
 
         public ViewModelActivator Activator { get; }
 
         public IScreen HostScreen { get; }
 
-        public string UrlPathSegment { get; } = Guid.NewGuid().ToString().Substring(0, 5);
+        private bool _selectedUserIsVisible;
 
         private string _fullName; 
 
@@ -34,26 +35,35 @@ namespace caffeApp.ViewModels
         public AdminViewModel(IScreen screen)
         {
             Activator = new ViewModelActivator();
-
-            _fullName = string.Empty;
-            var listOfUsers = DbContextProvider.GetContext().Users.ToList();
-            var listOfRoles = DbContextProvider.GetContext().Roles.ToList();
-            Users = new ObservableCollection<User>(listOfUsers);
-            Roles = new ObservableCollection<Role>(listOfRoles);
-
-            this.WhenAnyValue(vm => vm.SelectedUser).Subscribe(UpdateInfoUser);
-
             HostScreen = screen;
 
             this.WhenActivated((CompositeDisposable disposables) =>
             {
+                _selectedUserIsVisible = false;
+                _fullName = string.Empty;
+                var listOfUsers = DbContextProvider.GetContext().Users.ToList();
+                var listOfRoles = DbContextProvider.GetContext().Roles.ToList();
+                Users = new ObservableCollection<User>(listOfUsers);
+                Roles = new ObservableCollection<Role>(listOfRoles);
+                this.WhenAnyValue(vm => vm.SelectedUser).Subscribe(UpdateInfoUser);
+                
                 /* handle activation */
                 Disposable
                     .Create(() => {
                     })
                     .DisposeWith(disposables);
             });
+        }
 
+        public bool SelectedUserIsVisible
+        {
+            get {
+                return _selectedUserIsVisible;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _selectedUserIsVisible, value);  
+            }
         }
 
         public ObservableCollection<Role> Roles
@@ -88,8 +98,7 @@ namespace caffeApp.ViewModels
 
                 FullName = selectedUser.getFullName();
                 UserRole = role;
-
-                GridSelectedUser.IsVisible = true;
+                SelectedUserIsVisible = true;
             }
         }
 
@@ -128,6 +137,8 @@ namespace caffeApp.ViewModels
                 this.RaiseAndSetIfChanged(ref _selectedUser, value);
             }
         }
+
+        public string? UrlPathSegment => throw new NotImplementedException();
     }
 
 }

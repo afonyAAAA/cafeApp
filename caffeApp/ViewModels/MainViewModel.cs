@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 
 namespace caffeApp.ViewModels;
 
+
 public class MainViewModel : ViewModelBase, IScreen
 {
     // The Router associated with this Screen.
@@ -27,9 +28,7 @@ public class MainViewModel : ViewModelBase, IScreen
         // of a view model, this allows you to pass parameters to 
         // your view models, or to reuse existing view models.
         //
-
-  
-    
+        
 
         GoNext = ReactiveCommand.CreateFromObservable(
             () => Router.Navigate.Execute(new AdminViewModel(this))

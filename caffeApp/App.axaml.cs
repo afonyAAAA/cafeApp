@@ -4,6 +4,8 @@ using Avalonia.Markup.Xaml;
 
 using caffeApp.ViewModels;
 using caffeApp.Views;
+using ReactiveUI;
+using Splat;
 
 namespace caffeApp;
 
@@ -12,6 +14,7 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+      //  Locator.CurrentMutable.Register(() => new AdminView(), typeof(IViewFor<AdminViewModel>));
     }
 
     public override void OnFrameworkInitializationCompleted()

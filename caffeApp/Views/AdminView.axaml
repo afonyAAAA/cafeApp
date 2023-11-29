@@ -17,8 +17,10 @@
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
 	
-		<Grid ShowGridLines="True" 
-			  IsVisible="False"
+		<Grid
+			  Grid.Column="0"
+			  ShowGridLines="false" 
+			  IsVisible="{Binding SelectedUserIsVisible}"
 			  x:Name="grid_selected_user">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition/>
@@ -52,12 +54,6 @@
 				HorizontalAlignment="Right"
 				Grid.Row="2">
 			</TextBlock>
-			<TextBlock
-				Text="ФИО:"
-				VerticalAlignment="Center"
-				HorizontalAlignment="Right"
-				Grid.Row="3">
-			</TextBlock>
 
 			<TextBlock
 				Grid.Column="1"
@@ -75,53 +71,21 @@
 				Text="{Binding UserRole.Name}">
 			</TextBlock>
 		</Grid>
-				
 
-
-		<ListBox 
-			x:Name="listBoxUsers"
-			Grid.Column="3"
-			SelectedItem="{Binding SelectedUser}"
-			ItemsSource="{Binding Users}">
-			<ListBox.ItemTemplate>
-				<DataTemplate>
-					<Border
-						BorderThickness="2"
-						Height="100"
-						Padding="20 70 50 20"
-						Width="300"
-						BorderBrush="Black"
-						CornerRadius="20" >
-						<Grid
-							Margin=""
-							ShowGridLines="True"
-							Height="100"
-							Width="250"
-							VerticalAlignment="Center"
-				
-							ColumnDefinitions="Auto"
-							RowDefinitions="Auto, Auto, Auto">
-							<TextBlock
-								Grid.Column="0"
-								Grid.Row="0"
-								Text="{Binding FirstName}">
-							</TextBlock>
-							<TextBlock
-								Grid.Column="0"
-								Grid.Row="1"
-								Text="{Binding SecondName}">
-							</TextBlock>
-							<TextBlock
-								Grid.Column="0"
-								Grid.Row="3"
-								Text="{Binding Surname}">
-							</TextBlock>
-
-						</Grid>
-					</Border>
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
+		<DataGrid Margin="20" ItemsSource="{Binding Users}"
+          IsReadOnly="True"
+		  Grid.Column="1"
+          CanUserReorderColumns="True"
+          CanUserResizeColumns="True"
+          CanUserSortColumns="False"
+          GridLinesVisibility="All"
+          BorderThickness="1" BorderBrush="Gray">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="First Name"  Binding="{Binding FirstName}"/>
+				<DataGridTextColumn Header="Last Name" Binding="{Binding Surname}" />
+				<DataGridTextColumn Header="Last Name" Binding="{Binding Role}" />
+			</DataGrid.Columns>
+		</DataGrid>
 
 	</Grid>
 	
