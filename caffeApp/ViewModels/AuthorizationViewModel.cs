@@ -1,10 +1,14 @@
-﻿using Npgsql.Replication;
+﻿using caffeApp.Sources;
+using DynamicData.Binding;
+using Npgsql.Replication;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -60,14 +64,17 @@ namespace caffeApp.ViewModels
                 );
 
                 IObservable<bool> passwordIsValid = this.WhenAnyValue(
-                x => x.Login,
-                x => checkInputValidForLogin(x)
+                x => x.Password,
+                x => checkInputValidForPassword(x)
                 );
+
+                var inputIsValid = Observable.CombineLatest(passwordIsValid, loginIsValid, (passwordValid, loginValid) => passwordValid && loginValid)
+                      .Take(1);
 
                 SubmitCommand = ReactiveCommand.Create(() =>
                 {
-
-                }, passwordIsValid);
+                    LogIn();
+                }, inputIsValid);
 
                 /* handle activation */
                 Disposable
@@ -76,6 +83,13 @@ namespace caffeApp.ViewModels
                     })
                     .DisposeWith(disposables);
             });
+        }
+
+        private void LogIn()
+        {
+            var users = DbContextProvider.GetContext().Users.ToList();
+            var user = users.Find(x => x.FirstName == ""); 
+            
         }
 
         private bool checkInputValidForLogin(string login)

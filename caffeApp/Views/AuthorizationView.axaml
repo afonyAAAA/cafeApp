@@ -14,7 +14,6 @@
 	<UserControl.Styles>
 		<Styles>
 			<StyleInclude Source="avares://caffeApp/Designer/Styles/AppStyles.axaml"/>
-			<!-- Добавьте другие стили, если необходимо -->
 		</Styles>
 	</UserControl.Styles>
 	
