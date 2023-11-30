@@ -3,15 +3,15 @@ using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using caffeApp.ViewModels;
 using ReactiveUI;
-using System.Reactive.Disposables;
 
 namespace caffeApp.Views
 {
-    public partial class AdminView : ReactiveUserControl<AdminViewModel>
+    public partial class AuthorizationView : ReactiveUserControl<AuthorizationViewModel>
     {
-        public AdminView()
+        public AuthorizationView()
         {
-            this.WhenActivated(disposables => {
+            this.WhenActivated(disposables =>
+            {
 
             });
             AvaloniaXamlLoader.Load(this);

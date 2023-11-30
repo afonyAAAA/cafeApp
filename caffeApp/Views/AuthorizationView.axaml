@@ -1,0 +1,63 @@
+<rxui:ReactiveUserControl
+			 xmlns="https://github.com/avaloniaui"
+			 x:TypeArguments="vm:AuthorizationViewModel"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:rxui="http://reactiveui.net"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:caffeApp.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="caffeApp.Views.AuthorizationView"
+			 x:DataType="vm:AuthorizationViewModel">
+
+
+	<UserControl.Styles>
+		<Styles>
+			<StyleInclude Source="avares://caffeApp/Designer/Styles/AppStyles.axaml"/>
+			<!-- Добавьте другие стили, если необходимо -->
+		</Styles>
+	</UserControl.Styles>
+	
+	
+	<StackPanel 
+		VerticalAlignment="Center"
+		HorizontalAlignment="Center"
+		Width="200">
+		
+		<TextBlock
+			HorizontalAlignment="Center"
+			Classes="h1"
+			Margin="0 20"
+			Text="Авторизация"
+		/>
+		
+		<TextBlock 
+			Margin="0 5"
+			Text="Логин"
+			Classes="Sub"
+	    />
+		<TextBox
+			Text="{Binding Login}"
+		/>
+		
+		<TextBlock
+		Margin="0 5"
+		Text="Пароль"
+		Classes="Sub"
+	    />
+		<TextBox
+			Text="{Binding Password}"
+		/>
+		
+		<Button
+			HorizontalAlignment="Center"
+			Margin="0 20"
+			Command="{Binding}"
+			Content="Подтвердить"
+		/>
+	</StackPanel>
+
+	
+	
+
+</rxui:ReactiveUserControl>

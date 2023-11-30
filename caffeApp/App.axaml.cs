@@ -14,7 +14,6 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-      //  Locator.CurrentMutable.Register(() => new AdminView(), typeof(IViewFor<AdminViewModel>));
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -26,14 +25,6 @@ public partial class App : Application
                 DataContext = new MainViewModel()
             };
         }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-        {
-            singleViewPlatform.MainView = new MainView
-            {
-                DataContext = new MainViewModel()
-            };
-        }
-
         base.OnFrameworkInitializationCompleted();
     }
 }

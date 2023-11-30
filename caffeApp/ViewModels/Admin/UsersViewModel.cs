@@ -12,32 +12,34 @@ using Avalonia;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Collections.Generic;
 
-namespace caffeApp.ViewModels
+namespace caffeApp.ViewModels.Admin
 {
-    public class AdminViewModel : ViewModelBase, IRoutableViewModel, IActivatableViewModel
+    public class UsersViewModel : ViewModelBase, IActivatableViewModel
     {
         private ObservableCollection<User> _users;
 
         private ObservableCollection<Role> _roles;
 
-        public ViewModelActivator Activator { get; }
+        public override string? UrlPathSegment { get; set; }
 
-        public IScreen HostScreen { get; }
+        public override ViewModelActivator Activator { get; set; }
+
+        public override IScreen HostScreen { get; set; }
 
         private bool _selectedUserIsVisible;
 
-        private string _fullName; 
+        private string _fullName;
 
         private User _selectedUser;
 
         private Role _userRole;
 
-        public AdminViewModel(IScreen screen)
+        public UsersViewModel(IScreen screen)
         {
             Activator = new ViewModelActivator();
             HostScreen = screen;
 
-            this.WhenActivated((CompositeDisposable disposables) =>
+            this.WhenActivated((disposables) =>
             {
                 _selectedUserIsVisible = false;
                 _fullName = string.Empty;
@@ -46,10 +48,11 @@ namespace caffeApp.ViewModels
                 Users = new ObservableCollection<User>(listOfUsers);
                 Roles = new ObservableCollection<Role>(listOfRoles);
                 this.WhenAnyValue(vm => vm.SelectedUser).Subscribe(UpdateInfoUser);
-                
+
                 /* handle activation */
                 Disposable
-                    .Create(() => {
+                    .Create(() =>
+                    {
                     })
                     .DisposeWith(disposables);
             });
@@ -57,12 +60,13 @@ namespace caffeApp.ViewModels
 
         public bool SelectedUserIsVisible
         {
-            get {
+            get
+            {
                 return _selectedUserIsVisible;
             }
             set
             {
-                this.RaiseAndSetIfChanged(ref _selectedUserIsVisible, value);  
+                this.RaiseAndSetIfChanged(ref _selectedUserIsVisible, value);
             }
         }
 
@@ -92,7 +96,7 @@ namespace caffeApp.ViewModels
 
         private void UpdateInfoUser(User selectedUser)
         {
-            if(selectedUser != null)
+            if (selectedUser != null)
             {
                 var role = _roles.First(role => role.RoleId == selectedUser.RoleId);
 
@@ -106,7 +110,7 @@ namespace caffeApp.ViewModels
         {
             get
             {
-                 return _fullName;
+                return _fullName;
             }
             set
             {
@@ -138,7 +142,9 @@ namespace caffeApp.ViewModels
             }
         }
 
-        public string? UrlPathSegment => throw new NotImplementedException();
+
+
+
     }
 
 }
