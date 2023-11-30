@@ -11,6 +11,7 @@ using System.Reactive.Disposables;
 using Avalonia;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Collections.Generic;
+using caffeApp.Desktop;
 
 namespace caffeApp.ViewModels.Admin
 {

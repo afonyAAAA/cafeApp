@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace caffeApp.Sources;
+namespace caffeApp.Desktop;
 
 public partial class CafeContext : DbContext
 {
@@ -23,7 +23,7 @@ public partial class CafeContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=cafe;Username=postgres;Password=admin123");
+        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=cafe;Username=postgres;Password=postgres");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -56,19 +56,21 @@ public partial class CafeContext : DbContext
 
             entity.ToTable("User");
 
-            entity.HasIndex(e => e.DocumentId, "fk_1");
-
-            entity.HasIndex(e => e.RoleId, "fk_2");
-
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.DocumentId).HasColumnName("document_id");
             entity.Property(e => e.FirstName)
                 .HasMaxLength(100)
                 .HasColumnName("firstname");
+            entity.Property(e => e.Login)
+                .HasMaxLength(50)
+                .HasColumnName("login");
+            entity.Property(e => e.Password)
+                .HasMaxLength(50)
+                .HasColumnName("password");
             entity.Property(e => e.RoleId).HasColumnName("role_id");
             entity.Property(e => e.SecondName)
                 .HasMaxLength(100)
-                .HasColumnName("name");
+                .HasColumnName("secondname");
             entity.Property(e => e.Surname)
                 .HasMaxLength(100)
                 .HasColumnName("surname");
@@ -76,12 +78,12 @@ public partial class CafeContext : DbContext
             entity.HasOne(d => d.Document).WithMany(p => p.Users)
                 .HasForeignKey(d => d.DocumentId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_document");
+                .HasConstraintName("fk_1");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_role");
+                .HasConstraintName("fk_2");
         });
 
         OnModelCreatingPartial(modelBuilder);

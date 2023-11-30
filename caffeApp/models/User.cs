@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
-namespace caffeApp;
+namespace caffeApp.Desktop;
 
 public partial class User
 {
     public int UserId { get; set; }
+
+    public string Login { get; set; } = null!;
+
+    public string Password { get; set; } = null!;
 
     public string FirstName { get; set; } = null!;
 
@@ -22,10 +27,7 @@ public partial class User
 
     public virtual Role Role { get; set; } = null!;
 
-    public string getFullName()
-    {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.Append(FirstName + " " + SecondName + " " + Surname);
-        return stringBuilder.ToString();
-    }
+
+    public string getFullName() => FirstName + " " + SecondName + " " + Surname;
+    
 }

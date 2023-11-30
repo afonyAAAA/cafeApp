@@ -12,7 +12,7 @@
 
 	<UserControl.Styles>
 		<Styles>
-			<StyleInclude Source="Styles/AppStyles.axaml"/>
+			<StyleInclude Source="avares://caffeApp/Designer/Styles/AppStyles.axaml"/>
 			<!-- Добавьте другие стили, если необходимо -->
 		</Styles>
 	</UserControl.Styles>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace caffeApp;
+namespace caffeApp.Desktop;
 
 public partial class Role
 {
