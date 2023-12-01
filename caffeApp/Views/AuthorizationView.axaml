@@ -49,15 +49,11 @@
 		/>
 		
 		<Button
-			IsEnabled="True"
 			HorizontalAlignment="Center"
 			Margin="0 20"
 			Command="{Binding SubmitCommand}"
 			Content="Подтвердить"
 		/>
 	</StackPanel>
-
-	
-	
 
 </rxui:ReactiveUserControl>

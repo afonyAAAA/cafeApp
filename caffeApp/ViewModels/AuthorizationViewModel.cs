@@ -16,6 +16,9 @@ using System.Text;
 using System.Threading.Tasks;
 using MsBox.Avalonia.Enums;
 using MsBox.Avalonia;
+using System.Windows.Input;
+using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
 
 namespace caffeApp.ViewModels
 {
@@ -27,6 +30,8 @@ namespace caffeApp.ViewModels
         public override ViewModelActivator Activator { get; set; }
 
         public string _login;
+
+        private IObservable<bool> inputIsValid;
 
         public string _password;
 
@@ -54,29 +59,30 @@ namespace caffeApp.ViewModels
             }
         }
 
+        public ReactiveCommand<Unit, Unit> SubmitCommand { get;}
+
+
         public AuthorizationViewModel(IScreen screen) {
 
             Activator = new ViewModelActivator();
 
-         
+        
+            SubmitCommand = ReactiveCommand.Create(() => { _ = LogInAsync(); }, inputIsValid);
 
             this.WhenActivated(disposables => {
 
                 IObservable<bool> loginIsValid = this.WhenAnyValue(
-                x => x.Login,
-                x => checkInputValidForLogin(x)
-                );
+                 x => x.Login,
+                 x => checkInputValidForLogin(x)
+                 );
 
                 IObservable<bool> passwordIsValid = this.WhenAnyValue(
                 x => x.Password,
                 x => checkInputValidForPassword(x)
                 );
 
-                var inputIsValid = Observable.CombineLatest(passwordIsValid, loginIsValid, (passwordValid, loginValid) => passwordValid && loginValid)
-                      .Take(1);
-
-                SubmitCommand = ReactiveCommand.Create(() => LogInAsync());
-                
+                inputIsValid = Observable.CombineLatest(passwordIsValid, loginIsValid, (passwordValid, loginValid) => passwordValid && loginValid)
+                       .Take(1);
 
                 /* handle activation */
                 Disposable
@@ -86,8 +92,6 @@ namespace caffeApp.ViewModels
                     .DisposeWith(disposables);
             });
         }
-
-        public ReactiveCommand<Unit, Unit> SubmitCommand { get; set; }
 
         private async Task LogInAsync()
         {
@@ -123,15 +127,23 @@ namespace caffeApp.ViewModels
 
         private void saveUserInSystem(User user)
         {
-            // Преобразуем объект пользователя в JSON
-            string json = JsonConvert.SerializeObject(user);
+            try
+            {
+                // Преобразуем объект пользователя в JSON
+                string json = JsonConvert.SerializeObject(user);
 
-            // Определение пути к файлу
-            string fileName = "UserData.json";
-            string filePath = Path.Combine(Environment.CurrentDirectory, fileName);
+                // Определение пути к файлу
+                string fileName = "UserData.json";
+                string filePath = Path.Combine(Environment.CurrentDirectory, fileName);
 
-            // Записываем JSON в файл
-            File.WriteAllText(filePath, json);
+                // Записываем JSON в файл
+                File.WriteAllText(filePath, json);
+               
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
         }
 
         private bool checkInputValidForLogin(string login)
@@ -139,9 +151,9 @@ namespace caffeApp.ViewModels
             return !string.IsNullOrWhiteSpace(login) && login.Length > 1;
         }
 
-        private bool checkInputValidForPassword(string login)
+        private bool checkInputValidForPassword(string password)
         {
-            return !string.IsNullOrWhiteSpace(login) && login.Length > 1;
+            return !string.IsNullOrWhiteSpace(password) && password.Length > 1;
         }
     }
 }
