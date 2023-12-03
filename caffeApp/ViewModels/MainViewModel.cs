@@ -1,30 +1,49 @@
 ﻿using Avalonia;
 using Avalonia.Markup.Xaml;
+using caffeApp.Desktop;
+using caffeApp.models;
 using caffeApp.ViewModels.Admin;
+using DynamicData.Binding;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Newtonsoft.Json;
 using ReactiveUI;
+using System;
+using System.IO;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
 namespace caffeApp.ViewModels;
 
 
-public class MainViewModel : ReactiveObject, IScreen
+public class MainViewModel : ReactiveObject, IScreen, IActivatableViewModel, IAuthorizationCallback
 {
-    // The Router associated with this Screen.
-    // Required by the IScreen interface.
-
+ 
     public RoutingState Router { get; } = new RoutingState();
+    public ViewModelActivator Activator { get; } = new ViewModelActivator();
 
-    // The command that navigates a user to first view model.
-    public ReactiveCommand<Unit, IRoutableViewModel> GoNext { get; }
-
-    // The command that navigates a user back.
+    public ReactiveCommand<Unit, IRoutableViewModel> OpenUserView { get; }
+    public ReactiveCommand<Unit, IRoutableViewModel> OpenShiftView { get; }
+    public ReactiveCommand<Unit, Unit> LogOut { get; }
     public ReactiveCommand<Unit, IRoutableViewModel> GoBack => Router.NavigateBack;
 
-    public bool _adminFunctionalIsOpen;
-    public bool _sheffFunctionalIsOpen;
-    public bool _waiterFunctionalIsOpen;
-    public bool _isNotAuthorizedUser;
+    private User _user;
+    private bool _adminFunctionalIsOpen;
+    private bool _sheffFunctionalIsOpen;
+    private bool _waiterFunctionalIsOpen;
+    private bool _isNotAuthorizedUser;
+
+    public User User
+    {
+        get
+        {
+            return _user;
+        }
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _user, value);
+        }
+    }
 
     public bool AdminFunctionalIsOpen
     {
@@ -62,21 +81,79 @@ public class MainViewModel : ReactiveObject, IScreen
         }
     }
 
+    public bool IsNotAuthorizedUser
+    {
+        get
+        {
+            return _isNotAuthorizedUser;
+        }
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _isNotAuthorizedUser, value);
+        }
+    }
+
     public MainViewModel()
     {
         _adminFunctionalIsOpen = false;
         _sheffFunctionalIsOpen = false;
         _waiterFunctionalIsOpen = false;
-
         _isNotAuthorizedUser = true;
 
-        if (_isNotAuthorizedUser)
+        this.WhenActivated(disposables =>
         {
-            Router.Navigate.Execute(new AuthorizationViewModel(this));
-        }
+            this.WhenAnyValue(x => x.IsNotAuthorizedUser).Subscribe(tuple =>
+            {
+                var user = UserHelper.getAuthorizedUserInfo();
 
-        GoNext = ReactiveCommand.CreateFromObservable(
+                if (user.UserId != 0)
+                {
+                    IsNotAuthorizedUser = false;
+                    switch (user.RoleId)
+                    {
+                        case 1:
+                            WaiterFunctionalIsOpen = true;
+                            break;
+                        case 2:
+                            SheffFunctionalIsOpen = true;
+                            break;
+                        case 3:
+                            AdminFunctionalIsOpen = true;
+                            break;
+                    }
+                    Router.NavigationStack.Clear();
+                }
+                else
+                {
+                    Router.Navigate.Execute(new AuthorizationViewModel(this, this));
+                }
+            }).DisposeWith(disposables);
+        });
+
+
+        OpenUserView = ReactiveCommand.CreateFromObservable(
             () => Router.Navigate.Execute(new UsersViewModel(this))
         );
+
+        LogOut = ReactiveCommand.Create(() => {
+            logOut();
+            Router.Navigate.Execute(new AuthorizationViewModel(this, this));
+        });
+    }
+
+    private void logOut()
+    {
+        string pathToFile = Path.Combine(Environment.CurrentDirectory, "UserData.json");
+        File.Delete(pathToFile);
+        User = null;
+        IsNotAuthorizedUser = true;
+        AdminFunctionalIsOpen = false;
+        SheffFunctionalIsOpen = false;
+        WaiterFunctionalIsOpen = false;
+    }
+
+    public void OnAuthorizationComplete()
+    {
+        IsNotAuthorizedUser = false;
     }
 }

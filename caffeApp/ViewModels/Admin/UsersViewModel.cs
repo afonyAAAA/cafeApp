@@ -12,6 +12,8 @@ using Avalonia;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Collections.Generic;
 using caffeApp.Desktop;
+using System.Reactive;
+using System.Diagnostics.Metrics;
 
 namespace caffeApp.ViewModels.Admin
 {
@@ -35,15 +37,21 @@ namespace caffeApp.ViewModels.Admin
 
         private Role _userRole;
 
+        public ReactiveCommand<Unit, Unit> OpenRegistrationView { get; }
+
         public UsersViewModel(IScreen screen)
         {
             Activator = new ViewModelActivator();
+
             HostScreen = screen;
+
+            OpenRegistrationView = ReactiveCommand.Create(() => {
+                HostScreen.Router.Navigate.Execute(new RegistrationViewModel(HostScreen));
+            });
 
             this.WhenActivated((disposables) =>
             {
                 _selectedUserIsVisible = false;
-                _fullName = string.Empty;
                 var listOfUsers = DbContextProvider.GetContext().Users.ToList();
                 var listOfRoles = DbContextProvider.GetContext().Roles.ToList();
                 Users = new ObservableCollection<User>(listOfUsers);
@@ -142,10 +150,5 @@ namespace caffeApp.ViewModels.Admin
                 this.RaiseAndSetIfChanged(ref _selectedUser, value);
             }
         }
-
-
-
-
     }
-
 }

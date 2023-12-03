@@ -39,10 +39,32 @@
 					<Setter Property="VerticalAlignment" Value="Center"/>
 				</Style>
 			</StackPanel.Styles>
-			<Button Content="Сотрудники" Command="{Binding GoNext}" />
-			<Button Content="Смены" Command="{Binding GoBack}" />
+
+			<StackPanel IsVisible="{Binding AdminFunctionalIsOpen}">
+				<Button Content="Смены" Command="{Binding GoBack}" />
+				<Button Content="Сотрудники" Command="{Binding OpenUserView}" />
+			</StackPanel>
+
+			<StackPanel IsVisible="{Binding WaiterFunctionalIsOpen}">
+				<Button Content="Заказы" Command="{Binding OpenUserView}" />
+				<Button Content="Смены" Command="{Binding GoBack}" />
+			</StackPanel>
+
+			<StackPanel IsVisible="{Binding SheffFunctionalIsOpen}">
+				<Button Content="Заказы" Command="{Binding OpenUserView}" />
+				<Button Content="Смены" Command="{Binding GoBack}" />
+			</StackPanel>
+
+			<Button
+				Margin="4"
+				IsVisible="{Binding !IsNotAuthorizedUser}"
+				VerticalAlignment="Bottom"
+				Content="Выйти"
+				Command="{Binding LogOut}"
+			 />
+
 		</StackPanel>
 	</Grid>
-	
-	
+
+
 </Window>

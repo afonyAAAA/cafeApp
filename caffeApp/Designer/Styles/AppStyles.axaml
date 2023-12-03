@@ -16,6 +16,12 @@
 		<Setter Property="FontSize" Value="18"/>
 		<Setter Property="FontWeight" Value="Medium"/>
 	</Style>
+
+	<Style Selector="TextBox.P">
+		<Setter Property="Background" Value="Gainsboro"/>
+		<Setter Property="CornerRadius" Value="15"/>
+		<Setter Property="LineHeight" Value="20"/>
+	</Style>
 	
 
     <!-- Add Styles Here -->

@@ -19,19 +19,29 @@ using MsBox.Avalonia;
 using System.Windows.Input;
 using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
+using caffeApp.models;
 
 namespace caffeApp.ViewModels
 {
-    public class AuthorizationViewModel : ViewModelBase
+
+    public interface IAuthorizationCallback
     {
+        void OnAuthorizationComplete();
+    }
+
+    public class AuthorizationViewModel : ViewModelBase, IAuthorizationCallback
+    {
+        private IAuthorizationCallback authorizationCallback;
+
         public override string? UrlPathSegment { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public override IScreen HostScreen { get; set; }
+
         public override ViewModelActivator Activator { get; set; }
 
-        public string _login;
+        private IObservable<bool> _inputIsValid;
 
-        private IObservable<bool> inputIsValid;
+        public string _login;
 
         public string _password;
 
@@ -62,27 +72,18 @@ namespace caffeApp.ViewModels
         public ReactiveCommand<Unit, Unit> SubmitCommand { get;}
 
 
-        public AuthorizationViewModel(IScreen screen) {
+        public AuthorizationViewModel(IScreen screen, IAuthorizationCallback callback) {
 
+            HostScreen = screen;
+            authorizationCallback = callback;
             Activator = new ViewModelActivator();
 
-        
-            SubmitCommand = ReactiveCommand.Create(() => { _ = LogInAsync(); }, inputIsValid);
+            var inputIsValid = this.WhenAnyValue(x => x.Login, x => x.Password)
+                .Select(x => checkInputValidForLogin(x.Item1) && checkInputValidForPassword(x.Item2));
+
+            SubmitCommand = ReactiveCommand.CreateFromTask(LogInAsync, inputIsValid);
 
             this.WhenActivated(disposables => {
-
-                IObservable<bool> loginIsValid = this.WhenAnyValue(
-                 x => x.Login,
-                 x => checkInputValidForLogin(x)
-                 );
-
-                IObservable<bool> passwordIsValid = this.WhenAnyValue(
-                x => x.Password,
-                x => checkInputValidForPassword(x)
-                );
-
-                inputIsValid = Observable.CombineLatest(passwordIsValid, loginIsValid, (passwordValid, loginValid) => passwordValid && loginValid)
-                       .Take(1);
 
                 /* handle activation */
                 Disposable
@@ -102,6 +103,7 @@ namespace caffeApp.ViewModels
             if(user != null)
             {
                 saveUserInSystem(user);
+                OnAuthorizationComplete();
             }
             else
             {
@@ -109,7 +111,7 @@ namespace caffeApp.ViewModels
                 {
                     var box = MessageBoxManager
                             .GetMessageBoxStandard("Авторизация", "Неверный логин или пароль",
-                         ButtonEnum.YesNo);
+                         ButtonEnum.Ok);
 
                     var result = await box.ShowAsync();
                 }
@@ -117,7 +119,7 @@ namespace caffeApp.ViewModels
                 {
                     var box = MessageBoxManager
                             .GetMessageBoxStandard("Авторизация", "Пользователя с таким логином не существует",
-                         ButtonEnum.YesNo);
+                         ButtonEnum.Ok);
 
                     var result = await box.ShowAsync();
                 }
@@ -138,7 +140,6 @@ namespace caffeApp.ViewModels
 
                 // Записываем JSON в файл
                 File.WriteAllText(filePath, json);
-               
             }
             catch (Exception ex)
             {
@@ -146,14 +147,19 @@ namespace caffeApp.ViewModels
             }
         }
 
+        public void OnAuthorizationComplete()
+        {
+            authorizationCallback.OnAuthorizationComplete();
+        }
+
         private bool checkInputValidForLogin(string login)
         {
-            return !string.IsNullOrWhiteSpace(login) && login.Length > 1;
+            return !string.IsNullOrWhiteSpace(login);
         }
 
         private bool checkInputValidForPassword(string password)
         {
-            return !string.IsNullOrWhiteSpace(password) && password.Length > 1;
+            return !string.IsNullOrWhiteSpace(password);
         }
     }
 }

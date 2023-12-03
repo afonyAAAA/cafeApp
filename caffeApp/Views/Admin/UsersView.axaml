@@ -88,25 +88,26 @@
 				Text="{Binding UserRole.Name}">
 			</TextBlock>
 		</Grid>
-
-		<DataGrid Margin="20" ItemsSource="{Binding Users}"
-          IsReadOnly="True"
-		  Grid.Column="1"
-		  SelectedItem="{Binding SelectedUser}"
-          CanUserReorderColumns="True"
-          CanUserResizeColumns="True"
-          CanUserSortColumns="False"
-          GridLinesVisibility="All"
-          BorderThickness="1" BorderBrush="Gray">
-			<DataGrid.Columns>
-				<DataGridTextColumn Header="First Name"  Binding="{Binding FirstName}"/>
-				<DataGridTextColumn Header="Last Name" Binding="{Binding Surname}" />
-			</DataGrid.Columns>
-		</DataGrid>
-
-	</Grid>
-
-	
-	
-	
+		<StackPanel Grid.Column="1">
+			<DataGrid Margin="20" ItemsSource="{Binding Users}"
+					IsReadOnly="True"
+					SelectedItem="{Binding SelectedUser}"
+					CanUserReorderColumns="True"
+					CanUserResizeColumns="True"
+					CanUserSortColumns="False"
+					GridLinesVisibility="All"
+					BorderThickness="1" BorderBrush="Gray">
+				<DataGrid.Columns>
+					<DataGridTextColumn Header="Фамилия"  Binding="{Binding FirstName}"/>
+					<DataGridTextColumn Header="Имя"  Binding="{Binding SecondName}"/>
+					<DataGridTextColumn Header="Отчетсво" Binding="{Binding Surname}" />
+				</DataGrid.Columns>
+			</DataGrid>
+			<Button
+				Command="{Binding OpenRegistrationView}"
+				HorizontalAlignment="Center">
+				Добавить
+			</Button>
+		</StackPanel>
+	</Grid>	
 </rxui:ReactiveUserControl>

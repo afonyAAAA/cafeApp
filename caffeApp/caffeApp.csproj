@@ -34,6 +34,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\Admin\RegistrationView.axaml.cs">
+      <DependentUpon>RegistrationView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Admin\UsersView.axaml.cs">
       <DependentUpon>UsersView.axaml</DependentUpon>
     </Compile>

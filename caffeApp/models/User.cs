@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Text;
 
 namespace caffeApp.Desktop;
 
@@ -27,7 +25,8 @@ public partial class User
 
     public virtual Role Role { get; set; } = null!;
 
-
     public string getFullName() => FirstName + " " + SecondName + " " + Surname;
+    
+
     
 }
