@@ -94,14 +94,14 @@ namespace caffeApp.ViewModels.Admin
 
             HostScreen = screen;
 
-            OpenDialogFileUserImage = ReactiveCommand.Create(() =>
+            OpenDialogFileUserImage = ReactiveCommand.CreateFromTask(async () =>
             {
-                SelectedImageUserPath = openFilePicker();
+                SelectedImageUserPath = await openFilePicker();
             });
 
-            OpenDialogFileAgreementImage = ReactiveCommand.Create(() =>
+            OpenDialogFileAgreementImage = ReactiveCommand.CreateFromTask(async () =>
             {
-                SelectedImageAgreementPath = openFilePicker();
+                SelectedImageAgreementPath = await openFilePicker();
             });
 
             this.WhenAnyValue(x => x.SelectedImageUserPath).Subscribe(tuple =>
@@ -132,7 +132,7 @@ namespace caffeApp.ViewModels.Admin
         }
 
         [Obsolete]
-        private async Task openFilePicker()
+        private async Task<string> openFilePicker()
         {
             var dialog = new OpenFileDialog
             {
@@ -140,19 +140,15 @@ namespace caffeApp.ViewModels.Admin
                 Filters = GetImageFileFilters().ToList()
             };
 
-            var result = dialog.ShowAsync(GetWindow());
+            var result = await dialog.ShowAsync(GetWindow());
             string path = null;
 
-            await result.ContinueWith(task =>
+            if (result != null && result.Any())
             {
-                if (task.Result != null && task.Result.Any())
-                {
-                    // Ваш код обработки выбранного файла
-                     path = task.Result.First();
-                }
-            });
-
-            Task.FromResult(path);
+               path = result.First();
+            }
+           
+            return path;
         }
 
         [Obsolete]
@@ -174,12 +170,13 @@ namespace caffeApp.ViewModels.Admin
             };
         }
 
+        private void SignUp()
+        {
+            
+        }
+
         private Window GetWindow()
         {
-            // Метод, который возвращает текущее окно
-            // Вам, возможно, нужно адаптировать его в зависимости от вашей архитектуры
-            // Если у вас есть доступ к текущему окну, используйте его
-            // В данном случае просто возвращается null, а значит, окно будет выбираться автоматически
             return new Window();
         }
 
