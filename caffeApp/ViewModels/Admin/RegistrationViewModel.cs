@@ -25,6 +25,7 @@ using MsBox.Avalonia;
 using System.Collections.ObjectModel;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore;
+using System.Security.AccessControl;
 
 namespace caffeApp.ViewModels.Admin
 {
@@ -47,7 +48,7 @@ namespace caffeApp.ViewModels.Admin
         private Bitmap _userImageBitmap;
         private Bitmap _aggrementImageBitmap;
 
-        readonly string pathUsersFolder = Path.Combine(Environment.CurrentDirectory + "\"" + "Users");
+        readonly string pathUsersFolder = Path.Combine(Environment.CurrentDirectory + "\\" + "Users");
 
 
         public Bitmap UserImageBitmap
@@ -276,24 +277,6 @@ namespace caffeApp.ViewModels.Admin
             {
                 try
                 {
-                    var nextValue = DbContextProvider.GetContext().Database.ExecuteSqlRaw("SELECT nextval('your_sequence_name')");
-
-                    StringBuilder sb = new();
-                    var pathUsersFolder = Path.Combine(Environment.CurrentDirectory + "\"" + "Users");
-
-                    sb.Append(pathUsersFolder);
-                    sb.Append(FirstName + SecondName.First().ToString() + Surname.First().ToString());
-                    sb.Append("-" + );
-
-                    var pathFolderUser = sb.ToString();
-
-                    createUsersDirectory();
-                    createUserDirectory(pathFolderUser);
-                    var documentId = createDocumentUser(pathFolderUser);
-
-                    File.Move(SelectedImageUserPath, pathFolderUser);
-                    File.Move(SelectedImageAgreementPath, pathFolderUser);
-
                     User user = new();
                     user.Login = Login;
                     user.Password = Password;
@@ -301,11 +284,41 @@ namespace caffeApp.ViewModels.Admin
                     user.SecondName = SecondName;
                     user.Surname = Surname;
                     user.RoleId = Role.RoleId;
+                    var createdUser = DbContextProvider.GetContext().Add(user);
+
+                    StringBuilder sb = new();
+
+                    sb.Append(pathUsersFolder);
+                    sb.Append("\\" + FirstName + SecondName.First().ToString() + Surname.First().ToString());
+                    sb.Append("-" + createdUser.Entity.UserId);
+
+                    var pathFolderUser = sb.ToString();
+
+                    createUsersDirectory();
+                    createUserDirectory(pathFolderUser);
+                    File.SetAttributes(pathFolderUser, FileAttributes.Encrypted);
+
+                    var documentId = createDocumentUser(pathFolderUser);
+
+                    var fileNameUserPhoto = Path.GetFileName(SelectedImageUserPath);
+                    var fileNameAggreementPhoto = Path.GetFileName(SelectedImageAgreementPath);
+
+                    File.Copy(SelectedImageUserPath, Path.Combine(pathFolderUser, fileNameUserPhoto), true);
+                    File.Copy(SelectedImageAgreementPath, Path.Combine(pathFolderUser, fileNameAggreementPhoto), true);
+
+
+
                     user.DocumentId = documentId;
                     var a = DbContextProvider.GetContext().Update(user);
-                    var a = DbContextProvider.GetContext().Add(user);
-                    var b =a.Entity.UserId;
+                  
                     DbContextProvider.GetContext().SaveChanges();
+            
+                    var box = MessageBoxManager
+                    .GetMessageBoxStandard("Регистрация",
+                    "Пользователь создан!",
+                         ButtonEnum.Ok);
+
+                    var result = await box.ShowAsync();
 
                     HostScreen.Router.Navigate.Execute(new UsersViewModel(HostScreen));
                 }
@@ -333,7 +346,6 @@ namespace caffeApp.ViewModels.Admin
             document.Contractlink = Path.Combine(pathFolderUser, fileNameAggreementPhoto);
             document.Photolink = Path.Combine(pathFolderUser, fileNameUserPhoto);
             var documentid = DbContextProvider.GetContext().Add(document).Entity.DocumentId;
-            DbContextProvider.GetContext().SaveChanges();
             return documentid;
         }
 
@@ -341,7 +353,7 @@ namespace caffeApp.ViewModels.Admin
         {
             if (!Directory.Exists(pathFolderUser))
             {
-                Directory.CreateDirectory(pathFolderUser);
+                Directory.CreateDirectory(pathFolderUser).Attributes = FileAttributes.Normal;
             }
         }
 
