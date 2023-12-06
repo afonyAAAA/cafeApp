@@ -23,7 +23,7 @@ public partial class CafeContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=cafe;Username=postgres;Password=postgres");
+        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=cafe;Username=postgres;Password=admin123");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -56,7 +56,9 @@ public partial class CafeContext : DbContext
 
             entity.ToTable("User");
 
-            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.UserId)
+                .UseIdentityAlwaysColumn()
+                .HasColumnName("user_id");
             entity.Property(e => e.DocumentId).HasColumnName("document_id");
             entity.Property(e => e.FirstName)
                 .HasMaxLength(100)
@@ -74,15 +76,16 @@ public partial class CafeContext : DbContext
             entity.Property(e => e.Surname)
                 .HasMaxLength(100)
                 .HasColumnName("surname");
+            entity.Property(e => e.isFired)
+                .HasDefaultValue(false)
+                .HasColumnName("isfired");
 
             entity.HasOne(d => d.Document).WithMany(p => p.Users)
                 .HasForeignKey(d => d.DocumentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_1");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_2");
         });
 
@@ -90,6 +93,4 @@ public partial class CafeContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-
-
 }

@@ -1,4 +1,6 @@
 ﻿using caffeApp.Desktop;
+using caffeApp.Sources;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,7 +13,7 @@ namespace caffeApp.models
 {
     public static class UserHelper
     {
-        public static User getAuthorizedUserInfo()
+        public static User? getAuthorizedUserInfo()
         {
             User user = new User();
 
@@ -20,6 +22,12 @@ namespace caffeApp.models
                 string pathToFile = Path.Combine(Environment.CurrentDirectory, "UserData.json");
                 string json = File.ReadAllText(pathToFile);
                 user = JsonConvert.DeserializeObject<User>(json);
+
+                if(DbContextProvider.GetContext().Users.ToList().Find(x => x.UserId == user.UserId) == null)
+                {
+                    return null;
+                }
+                
             }
             catch (Exception ex)
             {

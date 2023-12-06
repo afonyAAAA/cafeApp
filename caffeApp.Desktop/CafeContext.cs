@@ -56,7 +56,9 @@ public partial class CafeContext : DbContext
 
             entity.ToTable("User");
 
-            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.UserId)
+                .UseIdentityAlwaysColumn()
+                .HasColumnName("user_id");
             entity.Property(e => e.DocumentId).HasColumnName("document_id");
             entity.Property(e => e.FirstName)
                 .HasMaxLength(100)
@@ -77,12 +79,10 @@ public partial class CafeContext : DbContext
 
             entity.HasOne(d => d.Document).WithMany(p => p.Users)
                 .HasForeignKey(d => d.DocumentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_1");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_2");
         });
 

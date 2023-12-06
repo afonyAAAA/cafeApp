@@ -14,6 +14,9 @@ using System.Collections.Generic;
 using caffeApp.Desktop;
 using System.Reactive;
 using System.Diagnostics.Metrics;
+using Microsoft.EntityFrameworkCore;
+using Avalonia.Media.Imaging;
+using System.IO;
 
 namespace caffeApp.ViewModels.Admin
 {
@@ -28,6 +31,10 @@ namespace caffeApp.ViewModels.Admin
         public override ViewModelActivator Activator { get; set; }
 
         public override IScreen HostScreen { get; set; }
+
+        private Bitmap _imageUser;
+
+        private Bitmap _imageAggreemnt;
 
         private bool _selectedUserIsVisible;
 
@@ -52,10 +59,15 @@ namespace caffeApp.ViewModels.Admin
             this.WhenActivated((disposables) =>
             {
                 _selectedUserIsVisible = false;
-                var listOfUsers = DbContextProvider.GetContext().Users.ToList();
-                var listOfRoles = DbContextProvider.GetContext().Roles.ToList();
+                var listOfUsers = DbContextProvider
+                .GetContext()
+                .Users
+                .Include(u => u.Role)
+                .Include(u => u.Document)
+                .ToList();
+       
                 Users = new ObservableCollection<User>(listOfUsers);
-                Roles = new ObservableCollection<Role>(listOfRoles);
+     
                 this.WhenAnyValue(vm => vm.SelectedUser).Subscribe(UpdateInfoUser);
 
                 /* handle activation */
@@ -107,10 +119,22 @@ namespace caffeApp.ViewModels.Admin
         {
             if (selectedUser != null)
             {
-                var role = _roles.First(role => role.RoleId == selectedUser.RoleId);
-
                 FullName = selectedUser.getFullName();
-                UserRole = role;
+                UserRole = selectedUser.Role ?? new Role { Name = "не указано" };
+                if(selectedUser.Document == null) {
+                    selectedUser.Document = new Document { Contractlink = " ", Photolink = " " };
+                }
+                try
+                {
+                    ImageUser = new Bitmap(Path.Combine(selectedUser.Document.Photolink));
+                    ImageAggreemnt = new Bitmap(Path.Combine(selectedUser.Document.Contractlink));
+                }
+                catch (Exception ex)
+                {
+                    ImageUser = null;
+                    ImageAggreemnt = null;
+                    Console.WriteLine(ex.Message);
+                }
                 SelectedUserIsVisible = true;
             }
         }
@@ -149,6 +173,15 @@ namespace caffeApp.ViewModels.Admin
             {
                 this.RaiseAndSetIfChanged(ref _selectedUser, value);
             }
+        }
+
+        public Bitmap? ImageUser { 
+            get => _imageUser;
+            set => this.RaiseAndSetIfChanged(ref _imageUser, value);
+        }
+        public Bitmap? ImageAggreemnt { 
+            get => _imageAggreemnt; 
+            set => this.RaiseAndSetIfChanged(ref _imageAggreemnt, value); 
         }
     }
 }

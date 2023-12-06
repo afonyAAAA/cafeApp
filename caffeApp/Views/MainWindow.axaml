@@ -11,6 +11,16 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="caffeApp">
 
+	<Window.Background>
+        <SolidColorBrush Color="LightYellow"/>
+    </Window.Background>
+
+	<Window.Styles>
+		<Styles>
+			<StyleInclude Source="/Designer/Styles/AppStyles.axaml"></StyleInclude>
+		</Styles>
+	</Window.Styles>
+	
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -21,9 +31,11 @@
 		
 		<rxui:RoutedViewHost Grid.Column="1" Router="{Binding Router}">
 			<rxui:RoutedViewHost.DefaultContent>
-				<TextBlock Text="Default content"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
+				<TextBlock 
+					Classes="Sub"
+					Text="Добро пожаловать!"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center" />
 			</rxui:RoutedViewHost.DefaultContent>
 			<rxui:RoutedViewHost.ViewLocator>
 				<!-- See AppViewLocator.cs section below -->

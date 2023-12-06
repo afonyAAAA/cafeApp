@@ -10,6 +10,9 @@
              x:Class="caffeApp.Views.AuthorizationView"
 			 x:DataType="vm:AuthorizationViewModel">
 
+	<UserControl.Background>
+		<SolidColorBrush Color="LightYellow"/>
+	</UserControl.Background>
 
 	<UserControl.Styles>
 		<Styles>

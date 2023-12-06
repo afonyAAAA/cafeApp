@@ -138,12 +138,6 @@ namespace caffeApp.ViewModels.Admin
 
             HostScreen = screen;
 
-            var roles = DbContextProvider.GetContext().Roles.ToList();
-            var users = DbContextProvider.GetContext().Users.ToList();
-
-            Roles = new(roles);
-            Users = new(users);
-
             OpenDialogFileUserImage = ReactiveCommand.CreateFromTask(async () =>
             {
                 SelectedImageUserPath = await openFilePicker();
@@ -176,6 +170,12 @@ namespace caffeApp.ViewModels.Admin
             });
 
             this.WhenActivated(disposables => {
+              
+                var roles = DbContextProvider.GetContext().Roles.ToList();
+                var users = DbContextProvider.GetContext().Users.ToList();
+
+                Roles = new(roles);
+                Users = new(users);
 
                 /* handle activation */
                 Disposable
@@ -277,6 +277,8 @@ namespace caffeApp.ViewModels.Admin
             {
                 try
                 {
+                    var context = DbContextProvider.GetContext();
+                    
                     User user = new();
                     user.Login = Login;
                     user.Password = Password;
@@ -284,7 +286,8 @@ namespace caffeApp.ViewModels.Admin
                     user.SecondName = SecondName;
                     user.Surname = Surname;
                     user.RoleId = Role.RoleId;
-                    var createdUser = DbContextProvider.GetContext().Add(user);
+                    var createdUser = context.Users.Add(user);
+                    context.SaveChanges();
 
                     StringBuilder sb = new();
 
@@ -296,9 +299,9 @@ namespace caffeApp.ViewModels.Admin
 
                     createUsersDirectory();
                     createUserDirectory(pathFolderUser);
-                    File.SetAttributes(pathFolderUser, FileAttributes.Encrypted);
+                    File.SetAttributes(pathFolderUser, FileAttributes.Normal);
 
-                    var documentId = createDocumentUser(pathFolderUser);
+                    var documentId = await createDocumentUser(pathFolderUser, context);
 
                     var fileNameUserPhoto = Path.GetFileName(SelectedImageUserPath);
                     var fileNameAggreementPhoto = Path.GetFileName(SelectedImageAgreementPath);
@@ -306,21 +309,18 @@ namespace caffeApp.ViewModels.Admin
                     File.Copy(SelectedImageUserPath, Path.Combine(pathFolderUser, fileNameUserPhoto), true);
                     File.Copy(SelectedImageAgreementPath, Path.Combine(pathFolderUser, fileNameAggreementPhoto), true);
 
-
-
                     user.DocumentId = documentId;
-                    var a = DbContextProvider.GetContext().Update(user);
-                  
-                    DbContextProvider.GetContext().SaveChanges();
-            
+                    context.Update(user);
+                    context.SaveChanges();
+
                     var box = MessageBoxManager
                     .GetMessageBoxStandard("Регистрация",
                     "Пользователь создан!",
-                         ButtonEnum.Ok);
+                            ButtonEnum.Ok);
 
                     var result = await box.ShowAsync();
 
-                    HostScreen.Router.Navigate.Execute(new UsersViewModel(HostScreen));
+                    await HostScreen.Router.Navigate.Execute(new UsersViewModel(HostScreen));
                 }
                 catch (Exception ex)
                 {
@@ -338,15 +338,16 @@ namespace caffeApp.ViewModels.Admin
 
         }
 
-        private int createDocumentUser(string pathFolderUser)
+        private async Task<int> createDocumentUser(string pathFolderUser, CafeContext context)
         {
             var fileNameUserPhoto = Path.GetFileName(SelectedImageUserPath);
             var fileNameAggreementPhoto = Path.GetFileName(SelectedImageAgreementPath);
             Desktop.Document document = new Desktop.Document();
             document.Contractlink = Path.Combine(pathFolderUser, fileNameAggreementPhoto);
             document.Photolink = Path.Combine(pathFolderUser, fileNameUserPhoto);
-            var documentid = DbContextProvider.GetContext().Add(document).Entity.DocumentId;
-            return documentid;
+            var documentid = context.Documents.Add(document);
+            context.SaveChanges();
+            return documentid.Entity.DocumentId;
         }
 
         private void createUserDirectory(string pathFolderUser)

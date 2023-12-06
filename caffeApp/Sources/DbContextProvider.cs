@@ -12,7 +12,7 @@ namespace caffeApp.Sources
         private static CafeContext _context;
 
         public static CafeContext GetContext() {
-            return _context = new CafeContext();
+            return _context ??= new CafeContext();
         }
     }
 }
