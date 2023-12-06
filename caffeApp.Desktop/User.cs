@@ -27,7 +27,5 @@ public partial class User
 
     public virtual Role Role { get; set; } = null!;
 
-    public virtual ICollection<UserWorkShift> Userworkshifts { get; set; } = new List<UserWorkShift>();
-
-    public string getFullName() => Firstname + " " + Secondname + " " + Surname;
+    public virtual ICollection<Userworkshift> Userworkshifts { get; set; } = new List<Userworkshift>();
 }

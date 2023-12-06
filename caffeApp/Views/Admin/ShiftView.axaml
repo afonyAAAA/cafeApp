@@ -1,0 +1,25 @@
+<rxui:ReactiveUserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:rxui="http://reactiveui.net"
+		     xmlns:vm="using:caffeApp.ViewModels.Admin"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:ShiftViewModel"
+			 x:TypeArguments="vm:ShiftViewModel"
+			 x:Class="caffeApp.Views.Admin.ShiftView">
+
+	<StackPanel
+		Margin="30"
+		HorizontalAlignment="Center">
+		<TextBlock>Смены</TextBlock>
+		<DataGrid
+			ItemsSource="{Binding }"
+			AutoGenerateColumns="True">
+		</DataGrid>
+
+		<Button Margin="0 10">Добавить</Button>
+
+	</StackPanel>
+
+</rxui:ReactiveUserControl>

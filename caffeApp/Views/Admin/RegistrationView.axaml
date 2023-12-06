@@ -23,8 +23,7 @@
 	</UserControl.Styles>
 
 	<Grid 
-		Margin="20" 
-		ShowGridLines="True">
+		Margin="20" >
 
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto"></ColumnDefinition>

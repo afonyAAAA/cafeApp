@@ -13,6 +13,7 @@ namespace caffeApp.Views
             UsersViewModel context => new UsersView { DataContext = context },
             AuthorizationViewModel context => new AuthorizationView { DataContext = context},
             RegistrationViewModel context => new RegistrationView { DataContext = context },
+            ShiftViewModel context => new ShiftView { DataContext = context },
             _ => throw new ArgumentOutOfRangeException(nameof(viewModel))
         };
     }

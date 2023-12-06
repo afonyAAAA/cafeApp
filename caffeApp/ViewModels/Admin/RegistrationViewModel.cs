@@ -286,6 +286,7 @@ namespace caffeApp.ViewModels.Admin
                     user.SecondName = SecondName;
                     user.Surname = Surname;
                     user.RoleId = Role.RoleId;
+
                     var createdUser = context.Users.Add(user);
                     context.SaveChanges();
 

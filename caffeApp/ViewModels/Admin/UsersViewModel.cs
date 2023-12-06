@@ -17,6 +17,10 @@ using System.Diagnostics.Metrics;
 using Microsoft.EntityFrameworkCore;
 using Avalonia.Media.Imaging;
 using System.IO;
+using caffeApp.utils;
+using DynamicData;
+using MsBox.Avalonia.Enums;
+using MsBox.Avalonia;
 
 namespace caffeApp.ViewModels.Admin
 {
@@ -36,15 +40,18 @@ namespace caffeApp.ViewModels.Admin
 
         private Bitmap _imageAggreemnt;
 
-        private bool _selectedUserIsVisible;
+        private bool _selectedUserIsVisible = false;
 
         private string _fullName;
+
+        private string _buttonFiredText;
 
         private User _selectedUser;
 
         private Role _userRole;
 
         public ReactiveCommand<Unit, Unit> OpenRegistrationView { get; }
+        public ReactiveCommand<Unit, Unit> SetStatusFired { get; }
 
         public UsersViewModel(IScreen screen)
         {
@@ -56,9 +63,13 @@ namespace caffeApp.ViewModels.Admin
                 HostScreen.Router.Navigate.Execute(new RegistrationViewModel(HostScreen));
             });
 
+            SetStatusFired = ReactiveCommand.Create(() =>
+            {
+                setStatusFired(SelectedUser);
+            });
+
             this.WhenActivated((disposables) =>
             {
-                _selectedUserIsVisible = false;
                 var listOfUsers = DbContextProvider
                 .GetContext()
                 .Users
@@ -68,7 +79,7 @@ namespace caffeApp.ViewModels.Admin
        
                 Users = new ObservableCollection<User>(listOfUsers);
      
-                this.WhenAnyValue(vm => vm.SelectedUser).Subscribe(UpdateInfoUser);
+                this.WhenAnyValue(vm => vm.SelectedUser).Subscribe(updateInfoUser);
 
                 /* handle activation */
                 Disposable
@@ -90,6 +101,8 @@ namespace caffeApp.ViewModels.Admin
                 this.RaiseAndSetIfChanged(ref _selectedUserIsVisible, value);
             }
         }
+
+        
 
         public ObservableCollection<Role> Roles
         {
@@ -115,7 +128,7 @@ namespace caffeApp.ViewModels.Admin
             }
         }
 
-        private void UpdateInfoUser(User selectedUser)
+        private void updateInfoUser(User selectedUser)
         {
             if (selectedUser != null)
             {
@@ -135,8 +148,22 @@ namespace caffeApp.ViewModels.Admin
                     ImageAggreemnt = null;
                     Console.WriteLine(ex.Message);
                 }
+
+                if (selectedUser.isFired)
+                    ButtonFiredText = "Вернуть";
+                else
+                    ButtonFiredText = "Уволить";
+
                 SelectedUserIsVisible = true;
             }
+        }
+        private void setStatusFired(User selectedUser)
+        {
+            selectedUser.isFired = !selectedUser.isFired;
+            DbContextProvider.GetContext().Users.Update(selectedUser);
+            DbContextProvider.GetContext().SaveChanges();
+            Users = DatabaseHelper.refreshEntity<User>();
+            SelectedUserIsVisible = false;
         }
 
         public string FullName
@@ -182,6 +209,10 @@ namespace caffeApp.ViewModels.Admin
         public Bitmap? ImageAggreemnt { 
             get => _imageAggreemnt; 
             set => this.RaiseAndSetIfChanged(ref _imageAggreemnt, value); 
+        }
+        public string ButtonFiredText { 
+            get => _buttonFiredText;
+            set => this.RaiseAndSetIfChanged(ref _buttonFiredText, value);
         }
     }
 }
