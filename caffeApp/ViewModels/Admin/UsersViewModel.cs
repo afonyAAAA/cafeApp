@@ -149,7 +149,7 @@ namespace caffeApp.ViewModels.Admin
                     Console.WriteLine(ex.Message);
                 }
 
-                if (selectedUser.isFired)
+                if ((bool)selectedUser.IsFired)
                     ButtonFiredText = "Вернуть";
                 else
                     ButtonFiredText = "Уволить";
@@ -159,7 +159,7 @@ namespace caffeApp.ViewModels.Admin
         }
         private void setStatusFired(User selectedUser)
         {
-            selectedUser.isFired = !selectedUser.isFired;
+            selectedUser.IsFired = !selectedUser.IsFired;
             DbContextProvider.GetContext().Users.Update(selectedUser);
             DbContextProvider.GetContext().SaveChanges();
             Users = DatabaseHelper.refreshEntity<User>();

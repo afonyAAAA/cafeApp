@@ -21,13 +21,13 @@ public partial class CafeContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
-    public virtual DbSet<UserWorkShift> Userworkshifts { get; set; }
+    public virtual DbSet<Userworkshift> Userworkshifts { get; set; }
 
     public virtual DbSet<Workshift> Workshifts { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=cafe;Username=postgres;Password=postgres");
+        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=cafe;Username=postgres;Password=admin123");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -62,12 +62,10 @@ public partial class CafeContext : DbContext
 
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.DocumentId).HasColumnName("document_id");
-            entity.Property(e => e.Firstname)
+            entity.Property(e => e.FirstName)
                 .HasMaxLength(100)
                 .HasColumnName("firstname");
-            entity.Property(e => e.Isfired)
-                .HasDefaultValueSql("false")
-                .HasColumnName("isfired");
+            entity.Property(e => e.IsFired).HasColumnName("isfired");
             entity.Property(e => e.Login)
                 .HasMaxLength(50)
                 .HasColumnName("login");
@@ -75,7 +73,7 @@ public partial class CafeContext : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("password");
             entity.Property(e => e.RoleId).HasColumnName("role_id");
-            entity.Property(e => e.Secondname)
+            entity.Property(e => e.SecondName)
                 .HasMaxLength(100)
                 .HasColumnName("secondname");
             entity.Property(e => e.Surname)
@@ -84,16 +82,15 @@ public partial class CafeContext : DbContext
 
             entity.HasOne(d => d.Document).WithMany(p => p.Users)
                 .HasForeignKey(d => d.DocumentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_1");
+                .HasConstraintName("fk_document");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_2");
+                .HasConstraintName("fk_role");
         });
 
-        modelBuilder.Entity<UserWorkShift>(entity =>
+        modelBuilder.Entity<Userworkshift>(entity =>
         {
             entity.HasKey(e => e.UserworkshiftId).HasName("pk_userworkshift");
 
@@ -102,11 +99,6 @@ public partial class CafeContext : DbContext
             entity.Property(e => e.UserworkshiftId).HasColumnName("userworkshift_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.WorkshiftId).HasColumnName("workshift_id");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Userworkshifts)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_user");
 
             entity.HasOne(d => d.Workshift).WithMany(p => p.Userworkshifts)
                 .HasForeignKey(d => d.WorkshiftId)

@@ -1,0 +1,126 @@
+<rxui:ReactiveUserControl
+             xmlns="https://github.com/avaloniaui" 
+             xmlns:rxui="http://reactiveui.net"
+             x:TypeArguments="vm:AddWorkShiftViewModel"
+             xmlns:vm="using:caffeApp.ViewModels.Admin"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:AddWorkShiftViewModel"
+             x:Class="caffeApp.Views.Admin.AddWorkShiftView">
+
+	<UserControl.Styles>
+		<StyleInclude Source="/Designer/Styles/AppStyles.axaml"></StyleInclude>
+	</UserControl.Styles>
+	
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition></ColumnDefinition>
+			<ColumnDefinition></ColumnDefinition>
+		</Grid.ColumnDefinitions>
+
+		<StackPanel
+			VerticalAlignment="Center"
+			HorizontalAlignment="Center"
+			Margin="10">
+			<TextBlock 
+				Classes="h1"
+				HorizontalAlignment="Center"
+				Margin="0 15">
+				Создание смены
+			</TextBlock>
+
+			<TextBlock>Дата</TextBlock>
+			<DatePicker 
+				
+				SelectedDate="{Binding SelectedDate}"
+				Margin="0 10">
+			</DatePicker>
+			<TextBlock>Время начала</TextBlock>
+			<TimePicker
+				ClockIdentifier="24HourClock"
+				SelectedTime="{Binding SelectedTimeStart}"
+				Margin="0 10">
+			</TimePicker>
+			<TextBlock>Время конца</TextBlock>
+			<TimePicker
+				ClockIdentifier="24HourClock"
+				SelectedTime="{Binding SelectedTimeEnd}"
+				Margin="0 10">
+			</TimePicker>
+
+			<Button 
+				HorizontalAlignment="Center"
+				Command="{Binding Submit}"
+				Margin="0 10">
+				Подтвердить
+			</Button>
+		</StackPanel>
+
+		<StackPanel Grid.Column="1"
+			VerticalAlignment="Center"
+			HorizontalAlignment="Center"
+			Margin="10">
+			<TextBlock
+				Classes="h1"
+				HorizontalAlignment="Center"
+				Margin="0 15">
+				Сотрудники на смену
+			</TextBlock>
+
+			<Grid Grid.Column="1" ShowGridLines="True">
+				<Grid.RowDefinitions>
+					<RowDefinition></RowDefinition>
+					<RowDefinition></RowDefinition>
+				</Grid.RowDefinitions>
+
+				<StackPanel Grid.Row="0">
+					<DataGrid
+						IsReadOnly="True"
+						SelectedItem="{Binding SelectedFromAllUsers}"
+						ItemsSource="{Binding Users}">
+						<DataGrid.Columns>
+							<DataGridTextColumn Binding="{Binding FirstName}" Header="Фамилия"></DataGridTextColumn>
+							<DataGridTextColumn Binding="{Binding SecondName}" Header="Имя"></DataGridTextColumn>
+							<DataGridTextColumn Binding="{Binding Surname}" Header="Отчетсво"></DataGridTextColumn>
+							<DataGridTextColumn Binding="{Binding Role.Name}" Header="Роль"></DataGridTextColumn>
+						</DataGrid.Columns>
+					</DataGrid>
+
+					<Button 
+						Command="{Binding AddUserShift}"
+						Margin="0 10"
+						HorizontalAlignment="Center">
+						Добавить
+					</Button>
+				</StackPanel>
+				
+				<StackPanel Grid.Row="1">
+					<DataGrid
+					    IsReadOnly="True"
+						Margin="0 15"
+						SelectedItem="{Binding SelectedFromSelectedUsers}"
+						ItemsSource="{Binding SelectedUsers}">
+						<DataGrid.Columns>
+							<DataGridTextColumn Binding="{Binding FirstName}" Header="Фамилия"></DataGridTextColumn>
+							<DataGridTextColumn Binding="{Binding SecondName}" Header="Имя"></DataGridTextColumn>
+							<DataGridTextColumn Binding="{Binding Surname}" Header="Отчетсво"></DataGridTextColumn>
+							<DataGridTextColumn Binding="{Binding Role.Name}" Header="Роль"></DataGridTextColumn>
+						</DataGrid.Columns>
+					</DataGrid>
+
+					<Button
+						Command="{Binding DeleteUserShift}"
+						Margin="0 10"
+						HorizontalAlignment="Center">
+						Удалить
+					</Button>
+				</StackPanel>
+
+			</Grid>
+			
+		</StackPanel>
+	</Grid>
+	
+</rxui:ReactiveUserControl>

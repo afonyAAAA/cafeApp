@@ -16,7 +16,7 @@ namespace caffeApp.utils
     {
         public static ObservableCollection<T> refreshEntity<T>() where T : class
         {
-            ObservableCollection<T> freshData = new ObservableCollection<T>(DbContextProvider.GetContext().Set<T>());
+            ObservableCollection<T> freshData = new ObservableCollection<T>(DbContextProvider.GetContext().Set<T>().IgnoreAutoIncludes<T>());
             return freshData;
         }
     }

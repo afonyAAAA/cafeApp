@@ -30,12 +30,16 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="NodaTime" Version="3.1.9" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Update="Views\Admin\RegistrationView.axaml.cs">
       <DependentUpon>RegistrationView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Admin\AddWorkShiftView.axaml.cs">
+      <DependentUpon>AddWorkShiftView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Admin\UsersView.axaml.cs">
       <DependentUpon>UsersView.axaml</DependentUpon>

@@ -31,7 +31,7 @@ namespace caffeApp.ViewModels.Admin
 {
     public class RegistrationViewModel : ViewModelBase
     {
-        public override string? UrlPathSegment { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override string? UrlPathSegment { get; set; }
         public override IScreen HostScreen { get; set; }
         public override ViewModelActivator Activator { get; set; }
 
@@ -49,6 +49,13 @@ namespace caffeApp.ViewModels.Admin
         private Bitmap _aggrementImageBitmap;
 
         readonly string pathUsersFolder = Path.Combine(Environment.CurrentDirectory + "\\" + "Users");
+
+
+        public ReactiveCommand<Unit, Unit> OpenDialogFileUserImage { get; }
+
+        public ReactiveCommand<Unit, Unit> OpenDialogFileAgreementImage { get; }
+
+        public ReactiveCommand<Unit, Unit> SignUpCommand { get; }
 
 
         public Bitmap UserImageBitmap
@@ -123,14 +130,7 @@ namespace caffeApp.ViewModels.Admin
             get => _users;
             set => this.RaiseAndSetIfChanged(ref _users, value);
         }
-
-        public ReactiveCommand<Unit, Unit> OpenDialogFileUserImage { get; }
-
-        public ReactiveCommand<Unit, Unit> OpenDialogFileAgreementImage{ get; }
-
-        public ReactiveCommand<Unit, Unit> SignUpCommand{ get; }
      
-
         [Obsolete]
         public RegistrationViewModel(IScreen screen)
         {

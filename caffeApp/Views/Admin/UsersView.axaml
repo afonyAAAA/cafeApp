@@ -6,7 +6,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:vm="using:caffeApp.ViewModels.Admin"
-			 xmlns:local="clr-namespace:caffeApp.utils"
+			 xmlns:local="using:caffeApp.utils"
              mc:Ignorable="d" 
 			 d:DesignWidth="800"
 			 d:DesignHeight="450"
@@ -149,7 +149,7 @@
 					<DataGridTemplateColumn Header="Статус">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate>
-								<TextBlock Text="{Binding isFired, Converter={StaticResource IsFiredToStatusConverter}}"
+								<TextBlock Text="{Binding IsFired, Converter={StaticResource IsFiredToStatusConverter}}"
 										   VerticalAlignment="Center"
 										   HorizontalAlignment="Center"/>
 							</DataTemplate>

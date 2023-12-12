@@ -11,23 +11,21 @@ public partial class User
 
     public string Password { get; set; } = null!;
 
-    public string Firstname { get; set; } = null!;
+    public string FirstName { get; set; } = null!;
 
-    public string Secondname { get; set; } = null!;
+    public string SecondName { get; set; } = null!;
 
     public string Surname { get; set; } = null!;
 
-    public int DocumentId { get; set; }
+    public bool IsFired { get; set; }
+
+    public int? DocumentId { get; set; }
 
     public int RoleId { get; set; }
 
-    public bool? Isfired { get; set; }
-
-    public virtual Document Document { get; set; } = null!;
+    public virtual Document? Document { get; set; }
 
     public virtual Role Role { get; set; } = null!;
 
-    public virtual ICollection<UserWorkShift> Userworkshifts { get; set; } = new List<UserWorkShift>();
-
-    public string getFullName() => Firstname + " " + Secondname + " " + Surname;
+    public string getFullName() => FirstName + " " + SecondName + " " + Surname;
 }

@@ -13,12 +13,17 @@
 		Margin="30"
 		HorizontalAlignment="Center">
 		<TextBlock>Смены</TextBlock>
+		
 		<DataGrid
-			ItemsSource="{Binding }"
+			ItemsSource="{Binding Shifts}"
 			AutoGenerateColumns="True">
 		</DataGrid>
 
-		<Button Margin="0 10">Добавить</Button>
+		<Button
+			Command="{Binding OpenAddWorkShift}"
+			Margin="0 10">
+			Добавить
+		</Button>
 
 	</StackPanel>
 

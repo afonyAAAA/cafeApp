@@ -130,6 +130,9 @@ public class MainViewModel : ReactiveObject, IScreen, IActivatableViewModel, IAu
             }).DisposeWith(disposables);
         });
 
+        OpenShiftView = ReactiveCommand.CreateFromObservable(
+            () => Router.Navigate.Execute(new ShiftViewModel(this))
+        );
 
         OpenUserView = ReactiveCommand.CreateFromObservable(
             () => Router.Navigate.Execute(new UsersViewModel(this))

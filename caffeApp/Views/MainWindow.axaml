@@ -53,7 +53,7 @@
 			</StackPanel.Styles>
 
 			<StackPanel IsVisible="{Binding AdminFunctionalIsOpen}">
-				<Button Content="Смены" Command="{Binding GoBack}" />
+				<Button Content="Смены" Command="{Binding OpenShiftView}" />
 				<Button Content="Сотрудники" Command="{Binding OpenUserView}" />
 			</StackPanel>
 
