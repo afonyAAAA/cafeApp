@@ -13,10 +13,14 @@
 		Margin="30"
 		HorizontalAlignment="Center">
 		<TextBlock>Смены</TextBlock>
-		
+
 		<DataGrid
-			ItemsSource="{Binding Shifts}"
-			AutoGenerateColumns="True">
+			ItemsSource="{Binding Shifts}">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Дата"></DataGridTextColumn>
+				<DataGridTextColumn Header="Время начала"></DataGridTextColumn>
+				<DataGridTextColumn Header="Время конца"></DataGridTextColumn>
+			</DataGrid.Columns>
 		</DataGrid>
 
 		<Button

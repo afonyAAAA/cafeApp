@@ -36,7 +36,6 @@ namespace caffeApp.ViewModels.Admin
         private User _selectedFromSelectedUsers;
         private IObservable<bool> _deleteIsClickable;
         private IObservable<bool> _addIsClickable;
-        private IObservable<bool> _submitIsClickable;
 
         private ObservableCollection<User> _users;
         private ObservableCollection<Workshift> _workShifts;
@@ -96,19 +95,12 @@ namespace caffeApp.ViewModels.Admin
             get => _addIsClickable; 
             set => this.RaiseAndSetIfChanged(ref _addIsClickable, value);
         }
-        public IObservable<bool> SubmitIsClickable {
-            get => _submitIsClickable;
-            set => this.RaiseAndSetIfChanged(ref _submitIsClickable, value);
-        }
-
         public AddWorkShiftViewModel(IScreen screen) {
 
             Activator = new ViewModelActivator();
             HostScreen = screen;
-            Users = DatabaseHelper.refreshEntity<User>();
+            Users = DatabaseHelper.refreshEntity<User>(x => x.Role);
             WorkShifts = DatabaseHelper.refreshEntity<Workshift>();
-
-            SubmitIsClickable = this.WhenAnyValue(x => x.SelectedDate).Select(_ => CheckDate().Result);
 
             SelectedDate = new DateTimeOffset(new DateTime(currentDateTime.Year, currentDateTime.Month, currentDateTime.Day));
          
@@ -118,8 +110,11 @@ namespace caffeApp.ViewModels.Admin
 
             Submit = ReactiveCommand.Create(() =>
             {
-                CreateWorkShift();
-                HostScreen.Router.Navigate.Execute(new ShiftViewModel(HostScreen));
+                if (CheckDate().Result)
+                {
+                    CreateWorkShift();
+                    HostScreen.Router.Navigate.Execute(new ShiftViewModel(HostScreen));
+                }
             });
 
             AddUserShift = ReactiveCommand.Create(() => {
@@ -148,7 +143,7 @@ namespace caffeApp.ViewModels.Admin
             workshift.Date = new DateOnly(SelectedDate.Year, SelectedDate.Month, SelectedDate.Day);
             workshift.Timestart = new TimeOnly(SelectedTimeStart.Hours, SelectedTimeStart.Minutes);
             workshift.Timeend = new TimeOnly(SelectedTimeEnd.Hours, SelectedTimeEnd.Minutes);
-            var workShiftId = context.Workshifts.Add(workshift).Entity.WorkshiftId;
+            var createdWorkShift = context.Workshifts.Add(workshift);
             context.SaveChanges();
 
             if(SelectedUsers.Count != 0)
@@ -157,7 +152,7 @@ namespace caffeApp.ViewModels.Admin
                 foreach(var user in  SelectedUsers)
                 {
                     Userworkshift userworkshift = new Userworkshift();
-                    userworkshift.WorkshiftId = workShiftId;
+                    userworkshift.WorkshiftId = createdWorkShift.Entity.WorkshiftId;
                     userworkshift.UserId = user.UserId;
                     workshifts.Add(userworkshift);
                 }
@@ -233,7 +228,7 @@ namespace caffeApp.ViewModels.Admin
              "Дата не должна быть позже сегоднешней даты",
                 ButtonEnum.Ok);
 
-                var result = await box.ShowAsync();
+                box.ShowAsync();
 
                 return false;
             }
@@ -246,7 +241,7 @@ namespace caffeApp.ViewModels.Admin
                "Граница даты: " + lastDate,
                   ButtonEnum.Ok);
 
-                var result = await box.ShowAsync();
+                box.ShowAsync();
 
                 return false;
             }

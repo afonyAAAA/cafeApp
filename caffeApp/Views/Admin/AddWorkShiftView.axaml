@@ -69,7 +69,7 @@
 				Сотрудники на смену
 			</TextBlock>
 
-			<Grid Grid.Column="1" ShowGridLines="True">
+			<Grid Grid.Column="1">
 				<Grid.RowDefinitions>
 					<RowDefinition></RowDefinition>
 					<RowDefinition></RowDefinition>
