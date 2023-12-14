@@ -78,6 +78,11 @@
 				<StackPanel Grid.Row="0">
 					<DataGrid
 						IsReadOnly="True"
+						CanUserReorderColumns="True"
+						CanUserResizeColumns="True"
+						CanUserSortColumns="False"
+						GridLinesVisibility="All"
+						BorderThickness="1" BorderBrush="Gray"
 						SelectedItem="{Binding SelectedFromAllUsers}"
 						ItemsSource="{Binding Users}">
 						<DataGrid.Columns>
@@ -100,6 +105,11 @@
 					<DataGrid
 					    IsReadOnly="True"
 						Margin="0 15"
+					    CanUserReorderColumns="True"
+						CanUserResizeColumns="True"
+						CanUserSortColumns="False"
+						GridLinesVisibility="All"
+						BorderThickness="1" BorderBrush="Gray"
 						SelectedItem="{Binding SelectedFromSelectedUsers}"
 						ItemsSource="{Binding SelectedUsers}">
 						<DataGrid.Columns>

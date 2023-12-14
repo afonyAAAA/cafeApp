@@ -148,10 +148,10 @@ namespace caffeApp.ViewModels.Admin
 
             if(SelectedUsers.Count != 0)
             {
-                List<Userworkshift> workshifts = new List<Userworkshift>();
+                List<UserWorkShift> workshifts = new List<UserWorkShift>();
                 foreach(var user in  SelectedUsers)
                 {
-                    Userworkshift userworkshift = new Userworkshift();
+                    UserWorkShift userworkshift = new UserWorkShift();
                     userworkshift.WorkshiftId = createdWorkShift.Entity.WorkshiftId;
                     userworkshift.UserId = user.UserId;
                     workshifts.Add(userworkshift);
@@ -201,12 +201,19 @@ namespace caffeApp.ViewModels.Admin
 
             foreach (var user in listOfAllUsers)
             {
+                bool userIsNotExist = true;
+
                 foreach(var selectedUser in newListSelectedUsers)
                 {
-                    if(user != selectedUser)
+                    if(user.UserId == selectedUser.UserId)
                     {
-                        newListAllUser.Add(user);
+                        userIsNotExist = false;
                     }
+                }
+
+                if (userIsNotExist)
+                {
+                    newListAllUser.Add(user);
                 }
             }
 

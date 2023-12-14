@@ -21,13 +21,15 @@ public partial class CafeContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
-    public virtual DbSet<Userworkshift> Userworkshifts { get; set; }
+    public virtual DbSet<UserWorkShift> Userworkshifts { get; set; }
 
     public virtual DbSet<Workshift> Workshifts { get; set; }
 
+    public virtual DbSet<WorkShiftUser> Workshiftusers { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=cafe;Username=postgres;Password=postgres");
+        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=cafe;Username=postgres;Password=admin123");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -90,7 +92,7 @@ public partial class CafeContext : DbContext
                 .HasConstraintName("fk_role");
         });
 
-        modelBuilder.Entity<Userworkshift>(entity =>
+        modelBuilder.Entity<UserWorkShift>(entity =>
         {
             entity.HasKey(e => e.UserworkshiftId).HasName("pk_userworkshift");
 
@@ -116,6 +118,22 @@ public partial class CafeContext : DbContext
             entity.Property(e => e.Date).HasColumnName("date");
             entity.Property(e => e.Timeend).HasColumnName("timeend");
             entity.Property(e => e.Timestart).HasColumnName("timestart");
+        });
+
+        modelBuilder.Entity<WorkShiftUser>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("workshiftusers");
+
+            entity.Property(e => e.Date).HasColumnName("date");
+            entity.Property(e => e.Fullname).HasColumnName("fullname");
+            entity.Property(e => e.Name)
+                .HasMaxLength(50)
+                .HasColumnName("name");
+            entity.Property(e => e.Time).HasColumnName("time");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.WorkshiftId).HasColumnName("workshift_id");
         });
 
         OnModelCreatingPartial(modelBuilder);

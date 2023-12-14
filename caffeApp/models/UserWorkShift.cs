@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace caffeApp.Desktop;
 
-public partial class Userworkshift
+public partial class UserWorkShift
 {
     public int UserworkshiftId { get; set; }
 

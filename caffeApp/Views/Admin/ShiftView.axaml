@@ -9,26 +9,68 @@
 			 x:TypeArguments="vm:ShiftViewModel"
 			 x:Class="caffeApp.Views.Admin.ShiftView">
 
-	<StackPanel
-		Margin="30"
-		HorizontalAlignment="Center">
-		<TextBlock>Смены</TextBlock>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition></ColumnDefinition>
+			<ColumnDefinition></ColumnDefinition>
+		</Grid.ColumnDefinitions>
 
-		<DataGrid
-			ItemsSource="{Binding Shifts}">
-			<DataGrid.Columns>
-				<DataGridTextColumn Header="Дата"></DataGridTextColumn>
-				<DataGridTextColumn Header="Время начала"></DataGridTextColumn>
-				<DataGridTextColumn Header="Время конца"></DataGridTextColumn>
-			</DataGrid.Columns>
-		</DataGrid>
 
-		<Button
-			Command="{Binding OpenAddWorkShift}"
-			Margin="0 10">
-			Добавить
-		</Button>
+		<TextBlock
+			HorizontalAlignment="Center"
+			VerticalAlignment="Center"
+			IsVisible="{Binding !IsClickOnWorkShift}">
+			Выберите смену
+		</TextBlock>
 
-	</StackPanel>
+		<StackPanel IsVisible="{Binding IsClickOnWorkShift}">
+			<TextBlock
+				Margin="10"
+				HorizontalAlignment="Center">
+				Работники на смене
+			</TextBlock>
+			<ListBox 
+				Margin="30"
+				HorizontalAlignment="Center"
+				ItemsSource="{Binding UsersInWorkShift}">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Border BorderBrush="Blue" BorderThickness="1"
+								CornerRadius="4" Padding="4">
+							<TextBlock Text="{Binding Fullname}"/>
+						</Border>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+
+			</ListBox>
+		</StackPanel>
+
+		
+		<StackPanel 
+			Grid.Column="1"
+			Margin="10"
+			HorizontalAlignment="Center">
+			<TextBlock>Смены</TextBlock>
+
+			<DataGrid
+				SelectedItem="{Binding SelectedWorkShift}"
+				HorizontalAlignment="Center"
+				Margin="30"
+				ItemsSource="{Binding UserWorkShifts}">
+				<DataGrid.Columns>
+					<DataGridTextColumn Binding="{Binding Date}" Header="Дата"></DataGridTextColumn>
+					<DataGridTextColumn Binding="{Binding Time}" Header="Время"></DataGridTextColumn>
+				</DataGrid.Columns>
+			</DataGrid>
+
+			<Button
+				Command="{Binding OpenAddWorkShift}"
+				Margin="0 10">
+				Добавить
+			</Button>
+
+		</StackPanel>
+	</Grid>
+
 
 </rxui:ReactiveUserControl>

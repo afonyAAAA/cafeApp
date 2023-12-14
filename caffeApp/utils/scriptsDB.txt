@@ -1,5 +1,7 @@
 ﻿
 
+/////////////////////TABLES//////////////////////////////
+
 DROP TABLE IF EXISTS "public".Role;
 
 
@@ -88,14 +90,20 @@ CREATE TABLE IF NOT EXISTS WorkShift
  CONSTRAINT pk_workShift PRIMARY KEY ( workShift_id )
 );
 
-create schema as WorkShiftUsersS
 
-create or replace view WorkShiftUsers as
-select w.date, concat(w.timestart, ' ', w.timeend) as Time, concat(u.FirstName, ' ', u.SecondName, ' ', u.surname) as FullName, r.name
+
+
+//////////////////////////////VIEW////////////////////////////////////////
+
+
+
+
+create or replace view WorkShiftUsersView as
+select w.date, concat(w.timestart, ' ', w.timeend) as Time, concat(u.FirstName, ' ', u.SecondName, ' ', u.surname) as FullName, r.name,  u.user_id, w.workshift_id 
 FROM userworkshift uw 
 join "User" u ON u.user_Id = uw.user_id
 join "role" r on r.role_id = u.role_id
 join workshift w on w.workshift_id = uw.workshift_Id 
 
-select * from WorkShiftUsers
+
 

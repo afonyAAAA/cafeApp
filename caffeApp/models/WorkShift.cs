@@ -13,5 +13,5 @@ public partial class Workshift
 
     public DateOnly Date { get; set; }
 
-    public virtual ICollection<Userworkshift> Userworkshifts { get; set; } = new List<Userworkshift>();
+    public virtual ICollection<UserWorkShift> Userworkshifts { get; set; } = new List<UserWorkShift>();
 }
