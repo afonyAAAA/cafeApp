@@ -1,0 +1,34 @@
+<rxui:ReactiveUserControl
+	         xmlns="https://github.com/avaloniaui"
+			 xmlns:rxui="http://reactiveui.net"
+             xmlns:vm="using:caffeApp.ViewModels"
+             x:TypeArguments="vm:OrdersViewModel"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             x:DataType="vm:OrdersViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="caffeApp.Views.OrdersView">
+
+	<StackPanel 
+		Margin="15"
+		
+		HorizontalAlignment="Center">
+		<TextBlock>Заказы</TextBlock>
+
+		<StackPanel Margin="0 20">
+			<TextBlock Margin="0 5">Дата</TextBlock>
+			<ComboBox>
+
+			</ComboBox>
+		</StackPanel>
+
+		
+		
+		<DataGrid>
+			
+		</DataGrid>
+		
+	</StackPanel>
+
+</rxui:ReactiveUserControl>

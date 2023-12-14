@@ -12,4 +12,8 @@ public partial class UserWorkShift
     public int UserId { get; set; }
 
     public virtual Workshift Workshift { get; set; } = null!;
+
+    public virtual User User { get; set; } = null!;
+
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }

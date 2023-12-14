@@ -28,4 +28,6 @@ public partial class User
     public virtual Role Role { get; set; } = null!;
 
     public string getFullName() => FirstName + " " + SecondName + " " + Surname;
+
+    public virtual ICollection<Userworkshift> Userworkshifts { get; set; } = new List<Userworkshift>();
 }

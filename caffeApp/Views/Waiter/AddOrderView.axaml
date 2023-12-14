@@ -1,0 +1,102 @@
+<rxui:ReactiveUserControl
+	         xmlns="https://github.com/avaloniaui"
+			 xmlns:rxui="http://reactiveui.net"
+			 x:TypeArguments="vm:AddOrderViewModel"
+             xmlns:vm="using:caffeApp.ViewModels.Waiter"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:AddOrderViewModel"
+             x:Class="caffeApp.Views.Waiter.AddOrderView">
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition></ColumnDefinition>
+			<ColumnDefinition></ColumnDefinition>
+		</Grid.ColumnDefinitions>
+
+		<StackPanel
+			Margin="30">
+			
+			<TextBlock 
+				HorizontalAlignment="Center"
+				Margin="0 20">
+				Добавление заказа
+			</TextBlock>
+			
+			<TextBlock>Количество гостей</TextBlock>
+			
+			<ComboBox 
+			  ItemsSource="{Binding NumberGuests}"
+			  SelectedIndex="0"
+			  SelectedItem="{Binding SelectedNumberGuests}"
+			  Width="200"
+			  Margin="0 5"
+		      MaxDropDownHeight="300">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding }"></TextBlock>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>	
+			
+			<TextBlock>Место</TextBlock>
+			
+			<ComboBox ItemsSource="{Binding Places}"
+			  SelectedIndex="0"
+			  SelectedItem="{Binding SelectedPlace}"
+			  Width="200"
+			  Margin="0 5"
+		      MaxDropDownHeight="300">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Number}"></TextBlock>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+			
+			<Button 
+				HorizontalAlignment="Center"
+				Margin="0 10">
+				Подтвердить
+			</Button>
+			
+		</StackPanel>
+
+		<StackPanel 
+			Margin="30"
+			VerticalAlignment="Center"
+			HorizontalAlignment="Center"
+			Grid.Column="1">
+
+			<TextBlock
+				HorizontalAlignment="Center">
+				Выбрать блюда
+			</TextBlock>
+			
+			<ComboBox ItemsSource="{Binding Foods}"
+				  SelectedIndex="0"
+				  SelectedItem="{Binding}"
+				  Width="200"
+				  Margin="0 5"
+				  MaxDropDownHeight="300">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Name}"></TextBlock>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+
+			<ListBox
+				ItemsSource="{Binding SelectedFoods}">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Name}"></TextBlock>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</StackPanel>
+	</Grid>
+	
+</rxui:ReactiveUserControl>
