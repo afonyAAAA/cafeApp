@@ -19,7 +19,7 @@ namespace caffeApp.ViewModels.Waiter
 
         public override ViewModelActivator Activator { get; set; }
 
-        private List<Food> _selectedFoods = new List<Food>();
+        private List<Food> _selectedFoods;
 
         private ObservableCollection<Place> _places;
 
@@ -71,24 +71,30 @@ namespace caffeApp.ViewModels.Waiter
 
             HostScreen = screen;
 
+            Activator = new();
+
             Places = DatabaseHelper.refreshEntity<Place>();
 
             Foods = DatabaseHelper.refreshEntity<Food>();
 
+            SelectedFood = new();
+
+            SelectedFoods = new();
+
+
             this.WhenAnyValue(x => x.SelectedFood).Subscribe(SelectedFoods.Add);
 
-
-
             this.WhenAnyValue(x => x.SelectedFoods).Subscribe(x => {
+
                 decimal sum = 0;
 
-                foreach(var food in x) {
+                foreach (var food in x)
+                {
                     sum += food.Price;
                 }
 
                 SumOrder = sum;
             });
-
 
             Submit = ReactiveCommand.Create(() => { 
                    

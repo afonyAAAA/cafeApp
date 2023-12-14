@@ -58,13 +58,13 @@
 			</StackPanel>
 
 			<StackPanel IsVisible="{Binding WaiterFunctionalIsOpen}">
-				<Button Content="Заказы" Command="{Binding OpenUserView}" />
-				<Button Content="Смены" Command="{Binding GoBack}" />
+				<Button Content="Заказы" Command="{Binding OpenOrdersView}" />
+				<Button Content="Смены" Command="{Binding OpenShiftView}" />
 			</StackPanel>
 
 			<StackPanel IsVisible="{Binding SheffFunctionalIsOpen}">
 				<Button Content="Заказы" Command="{Binding OpenUserView}" />
-				<Button Content="Смены" Command="{Binding GoBack}" />
+				<Button Content="Смены" Command="{Binding OpenShiftView}" />
 			</StackPanel>
 
 			<Button

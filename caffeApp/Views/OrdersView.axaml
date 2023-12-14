@@ -10,25 +10,49 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="caffeApp.Views.OrdersView">
 
-	<StackPanel 
-		Margin="15"
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition></ColumnDefinition>
+			<ColumnDefinition></ColumnDefinition>
+		</Grid.ColumnDefinitions>
 		
-		HorizontalAlignment="Center">
-		<TextBlock>Заказы</TextBlock>
+		<Button
+			Command="{Binding OpenAddOrderView}"
+			Height="50"
+			Width="150"
+			Margin="20"
+			VerticalAlignment="Bottom"
+			HorizontalAlignment="Center">	
+			<TextBlock 
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center">
+				Добавить
+			</TextBlock>
+		</Button>
+		
+		<StackPanel Grid.Column="1"
+			Margin="15"
+		
+			HorizontalAlignment="Center">
+			<TextBlock>Заказы</TextBlock>
 
-		<StackPanel Margin="0 20">
-			<TextBlock Margin="0 5">Дата</TextBlock>
-			<ComboBox>
+			<StackPanel Margin="0 20">
+				<TextBlock Margin="0 5">Дата</TextBlock>
+				<ComboBox>
 
-			</ComboBox>
+				</ComboBox>
+			</StackPanel>
+
+
+
+			<DataGrid>
+
+			</DataGrid>
+
 		</StackPanel>
+	</Grid>
+	
 
-		
-		
-		<DataGrid>
-			
-		</DataGrid>
-		
-	</StackPanel>
 
 </rxui:ReactiveUserControl>

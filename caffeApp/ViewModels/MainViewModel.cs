@@ -24,6 +24,7 @@ public class MainViewModel : ReactiveObject, IScreen, IActivatableViewModel, IAu
 
     public ReactiveCommand<Unit, IRoutableViewModel> OpenUserView { get; }
     public ReactiveCommand<Unit, IRoutableViewModel> OpenShiftView { get; }
+    public ReactiveCommand<Unit, IRoutableViewModel> OpenOrdersView { get; }
     public ReactiveCommand<Unit, Unit> LogOut { get; }
     public ReactiveCommand<Unit, IRoutableViewModel> GoBack => Router.NavigateBack;
 
@@ -132,6 +133,10 @@ public class MainViewModel : ReactiveObject, IScreen, IActivatableViewModel, IAu
 
         OpenShiftView = ReactiveCommand.CreateFromObservable(
             () => Router.Navigate.Execute(new ShiftViewModel(this))
+        );
+        
+        OpenOrdersView = ReactiveCommand.CreateFromObservable(
+            () => Router.Navigate.Execute(new OrdersViewModel(this))
         );
 
         OpenUserView = ReactiveCommand.CreateFromObservable(
