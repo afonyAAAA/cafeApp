@@ -23,15 +23,19 @@ namespace caffeApp.models
                 string json = File.ReadAllText(pathToFile);
                 user = JsonConvert.DeserializeObject<User>(json);
 
-                if(DbContextProvider.GetContext().Users.ToList().Find(x => x.UserId == user.UserId) == null)
+                if(user == null)
                 {
                     return null;
                 }
-                
+                else if (DbContextProvider.GetContext().Users.ToList().Find(x => x.UserId == user.UserId) == null)
+                {
+                    return null;
+                }
+
             }
             catch (Exception ex)
             {
-               Console.WriteLine(ex.Message);   
+                Console.WriteLine(ex.Message);
             }
 
             return user;

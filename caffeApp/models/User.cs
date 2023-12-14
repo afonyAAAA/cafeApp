@@ -29,5 +29,5 @@ public partial class User
 
     public string getFullName() => FirstName + " " + SecondName + " " + Surname;
 
-    public virtual ICollection<Userworkshift> Userworkshifts { get; set; } = new List<Userworkshift>();
+    public virtual ICollection<UserWorkShift> Userworkshifts { get; set; } = new List<UserWorkShift>();
 }

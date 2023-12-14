@@ -1,4 +1,4 @@
-﻿
+﻿﻿
 ////////////////TABLES//////////////
 
 CREATE TABLE IF NOT EXISTS "public"."User"
@@ -118,15 +118,19 @@ CONSTRAINT FK_food FOREIGN KEY ( food_id ) REFERENCES Food ( food_id ),
 CONSTRAINT FK_order FOREIGN KEY ( order_Id ) REFERENCES "Order" ( order_Id )
 );
 
+
+
+//////////////////////VIEWS//////////////////////////
+
+
 create schema as WorkShiftUsersS
 
-
-create or replace view WorkShiftUsersView as
-select w.date, concat(w.timestart, ' ', w.timeend) as Time, concat(u.FirstName, ' ', u.SecondName, ' ', u.surname) as FullName, r.name,  u.user_id, w.workshift_id 
+create or replace view WorkShiftUsers as
+select w.date, concat(w.timestart, ' ', w.timeend) as Time, concat(u.FirstName, ' ', u.SecondName, ' ', u.surname) as FullName, r.name
 FROM userworkshift uw 
 join "User" u ON u.user_Id = uw.user_id
 join "role" r on r.role_id = u.role_id
 join workshift w on w.workshift_id = uw.workshift_Id 
 
-
+select * from WorkShiftUsers
 

@@ -27,6 +27,6 @@ public partial class Order
 
     public virtual Statusorder Statusorder { get; set; } = null!;
 
-    public virtual Userworkshift Userworkshift { get; set; } = null!;
+    public virtual UserWorkShift Userworkshift { get; set; } = null!;
 
 }

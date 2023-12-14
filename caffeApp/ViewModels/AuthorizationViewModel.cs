@@ -136,9 +136,9 @@ namespace caffeApp.ViewModels
 
                 // Определение пути к файлу
                 string fileName = "UserData.json";
+
                 string filePath = Path.Combine(Environment.CurrentDirectory, fileName);
 
-                // Записываем JSON в файл
                 File.WriteAllText(filePath, json);
             }
             catch (Exception ex)

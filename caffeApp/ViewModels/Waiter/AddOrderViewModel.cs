@@ -77,6 +77,8 @@ namespace caffeApp.ViewModels.Waiter
 
             this.WhenAnyValue(x => x.SelectedFood).Subscribe(SelectedFoods.Add);
 
+
+
             this.WhenAnyValue(x => x.SelectedFoods).Subscribe(x => {
                 decimal sum = 0;
 
