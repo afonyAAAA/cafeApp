@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace caffeApp.Desktop;
 
-public partial class WorkShiftUser
+public partial class Workshiftview
 {
     public DateOnly? Date { get; set; }
 
@@ -11,7 +11,7 @@ public partial class WorkShiftUser
 
     public string? Fullname { get; set; }
 
-    public string? Name { get; set; }
+    public string? Rolename { get; set; }
 
     public int? UserId { get; set; }
 

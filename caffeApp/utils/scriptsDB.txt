@@ -83,30 +83,33 @@ CONSTRAINT PK_statusOrder PRIMARY KEY ( statusOrder_id )
 
 CREATE TABLE IF NOT EXISTS Payment
 (
-payment_id serial NOT NULL,
-statusPayment_id int NOT NULL,
-"sum" decimal NOT NULL,
-isNonCash boolean NOT NULL,
-datePayment time with time zone NOT NULL,
-CONSTRAINT PK_payment PRIMARY KEY ( payment_id ),
-CONSTRAINT FK_statusPayment FOREIGN KEY ( statusPayment_id ) REFERENCES StatusPayment ( statusPayment_id )
+ payment_id       serial NOT NULL,
+ statusPayment_id int NOT NULL,
+ "sum"              decimal NOT NULL,
+ isNonCash        boolean NULL,
+ datePayment      timestamp with time zone NOT NULL,
+ CONSTRAINT PK_payment PRIMARY KEY ( payment_id ),
+ CONSTRAINT FK_statusPayment FOREIGN KEY ( statusPayment_id ) REFERENCES StatusPayment ( statusPayment_id )
 );
 
 CREATE TABLE IF NOT EXISTS "Order"
 (
-order_Id serial NOT NULL,
-quantityClients int NOT NULL,
-dateOrder date NOT NULL,
-statusOrder_id int NOT NULL,
-place_id int NOT NULL,
-payment_id int NULL,
-UserWorkShift_id int NOT NULL,
-CONSTRAINT PK_order PRIMARY KEY ( order_Id ),
-CONSTRAINT FK_payment FOREIGN KEY ( payment_id ) REFERENCES Payment ( payment_id ),
-CONSTRAINT FK_place FOREIGN KEY ( place_id ) REFERENCES Place ( place_id ),
-CONSTRAINT FK_statusOrder FOREIGN KEY ( statusOrder_id ) REFERENCES StatusOrder ( statusOrder_id ),
-CONSTRAINT FK_userWorkShift FOREIGN KEY ( UserWorkShift_id ) REFERENCES UserWorkShift ( UserWorkShift_id )
+ order_Id        serial NOT NULL,
+ quantityClients int NOT NULL,
+ dateOrder       date NOT NULL,
+ statusOrder_id  int NOT NULL,
+ place_id        int NOT NULL,
+ payment_id      int NULL,
+ user_id         int NOT NULL,
+ workShift_id    int NOT NULL,
+ CONSTRAINT PK_order PRIMARY KEY ( order_Id ),
+ CONSTRAINT FK_user FOREIGN KEY ( user_id ) REFERENCES "public"."User" ( user_id ),
+ CONSTRAINT FK_workshift FOREIGN KEY ( workShift_id ) REFERENCES WorkShift ( workShift_id ),
+ CONSTRAINT FK_payment FOREIGN KEY ( payment_id ) REFERENCES Payment ( payment_id ),
+ CONSTRAINT FK_place FOREIGN KEY ( place_id ) REFERENCES Place ( place_id ),
+ CONSTRAINT FK_statusOrder FOREIGN KEY ( statusOrder_id ) REFERENCES StatusOrder ( statusOrder_id )
 );
+
 
 CREATE TABLE IF NOT EXISTS FoodOrder
 (
@@ -125,12 +128,28 @@ CONSTRAINT FK_order FOREIGN KEY ( order_Id ) REFERENCES "Order" ( order_Id )
 
 create schema as WorkShiftUsersS
 
-create or replace view WorkShiftUsers as
-select w.date, concat(w.timestart, ' ', w.timeend) as Time, concat(u.FirstName, ' ', u.SecondName, ' ', u.surname) as FullName, r.name
+create or replace view WorkShiftView as
+select w.date, concat(w.timestart, ' ', w.timeend) as Time, concat(u.FirstName, ' ', u.SecondName, ' ', u.surname) as FullName, r.name as RoleName, u.user_id, w.workshift_id
 FROM userworkshift uw 
 join "User" u ON u.user_Id = uw.user_id
 join "role" r on r.role_id = u.role_id
 join workshift w on w.workshift_id = uw.workshift_Id 
 
-select * from WorkShiftUsers
-
+create or replace view OrdersView as
+select
+    distinct o.order_id,
+    o.quantityclients,
+    o.dateorder,
+    p."number" as NumberPlace,
+    u.user_id,
+    p2.isnoncash,
+    p2.sum,
+    s."name" as Status,
+    o.workshift_id
+from
+    "Order" o
+    join statusorder s ON o.statusorder_id = s.statusorder_id
+    join place p on p.place_id = o.place_id
+    join payment p2 on p2.payment_id = o.payment_id
+    join "User" u ON u.user_id = o.user_id
+    join userworkshift uw on uw.user_id = o.user_id

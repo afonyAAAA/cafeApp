@@ -22,9 +22,7 @@ using System.Reactive.Linq;
 namespace caffeApp.ViewModels.Admin
 {
     public class AddWorkShiftViewModel : ViewModelBase
-    {
-        private readonly LocalDateTime currentDateTime = NodaTime.SystemClock.Instance.GetCurrentInstant().InUtc().LocalDateTime;
-     
+    { 
         public override string? UrlPathSegment { get; set; }
         public override IScreen HostScreen { get; set; }
         public override ViewModelActivator Activator { get; set; }
@@ -32,21 +30,26 @@ namespace caffeApp.ViewModels.Admin
         private DateTimeOffset _selectedDate;
         private TimeSpan _selectedTimeStart;
         private TimeSpan _selectedTimeEnd;
-        private User _selectedFromAllUsers;
-        private User _selectedFromSelectedUsers;
+        private User _selectedUser;
         private IObservable<bool> _deleteIsClickable;
         private IObservable<bool> _addIsClickable;
-
         private ObservableCollection<User> _users;
         private ObservableCollection<Workshift> _workShifts;
         private ObservableCollection<User> _selectedUsers;
+        private User _selectedFromSelectedUsers;
+        private User _selectedFromFromAllUsers;
 
         public ReactiveCommand<Unit, Unit> AddUserShift { get; }
         public ReactiveCommand<Unit, Unit> DeleteUserShift { get; }
         public ReactiveCommand<Unit, Unit> Submit { get; }
 
         public ObservableCollection<User> Users {
-            get => _users;
+            get
+            { 
+                var usersIsNotFired = _users.Where(x =>!x.IsFired).ToList();
+
+                return new(usersIsNotFired);
+            }
             set => this.RaiseAndSetIfChanged(ref _users, value);
         }
 
@@ -75,15 +78,16 @@ namespace caffeApp.ViewModels.Admin
             set => this.RaiseAndSetIfChanged(ref _selectedTimeEnd, value);
         }
 
-        public User SelectedFromAllUsers { 
-            get => _selectedFromAllUsers;
-            set => this.RaiseAndSetIfChanged(ref _selectedFromAllUsers, value);
-        }    
-
         public User SelectedFromSelectedUsers
         { 
             get => _selectedFromSelectedUsers;
             set => this.RaiseAndSetIfChanged(ref _selectedFromSelectedUsers, value);
+        }
+
+        public User SelectedFromAllUsers
+        {
+            get => _selectedFromFromAllUsers;
+            set => this.RaiseAndSetIfChanged(ref _selectedFromFromAllUsers, value);
         }
 
         public IObservable<bool> DeleteIsClickable {
@@ -98,15 +102,30 @@ namespace caffeApp.ViewModels.Admin
         public AddWorkShiftViewModel(IScreen screen) {
 
             Activator = new ViewModelActivator();
+
             HostScreen = screen;
+
             Users = DatabaseHelper.refreshEntity<User>(x => x.Role);
+
             WorkShifts = DatabaseHelper.refreshEntity<Workshift>();
 
-            SelectedDate = new DateTimeOffset(new DateTime(currentDateTime.Year, currentDateTime.Month, currentDateTime.Day));
-         
-            AddIsClickable = this.WhenAnyValue(x => x.Users.Count).Select(x => x != 0);
+            SelectedUsers = new();
 
-            DeleteIsClickable = this.WhenAnyValue(x => x.SelectedUsers.Count).Select(x => x != 0);
+            SelectedFromAllUsers = new();
+
+            SelectedFromSelectedUsers = new();
+
+            DateTime currentDateTime = DateTime.Now;
+
+            SelectedDate = new DateTimeOffset(new DateTime(currentDateTime.Year, currentDateTime.Month, currentDateTime.Day));
+
+            DeleteIsClickable = this.WhenAnyValue(x => x.SelectedFromSelectedUsers)
+        .Select(selectedUser => selectedUser != null && Users.ToList().All(x => x.UserId != selectedUser.UserId));
+
+            AddIsClickable = this.WhenAnyValue(x => x.SelectedFromAllUsers)
+                .Select(selectedUser => selectedUser != null && SelectedUsers.ToList().All(x => x.UserId != selectedUser.UserId))
+                .StartWith(true);
+
 
             Submit = ReactiveCommand.Create(() =>
             {
@@ -146,12 +165,30 @@ namespace caffeApp.ViewModels.Admin
             var createdWorkShift = context.Workshifts.Add(workshift);
             context.SaveChanges();
 
-            if(SelectedUsers.Count != 0)
+            if (SelectedUsers.Count < 4)
             {
-                List<UserWorkShift> workshifts = new List<UserWorkShift>();
+                var box = MessageBoxManager
+              .GetMessageBoxStandard("Создание смены",
+                  "В смене не может быть меньше 4 человек",
+                  ButtonEnum.Ok);
+
+                box.ShowAsync();
+            }
+            else if (SelectedUsers.Count > 7)
+            {
+                var box = MessageBoxManager
+           .GetMessageBoxStandard("Создание смены",
+               "В смене не может быть больше 7 человек",
+               ButtonEnum.Ok);
+
+                box.ShowAsync();
+            }
+            else
+            {
+                List<Userworkshift> workshifts = new List<Userworkshift>();
                 foreach(var user in  SelectedUsers)
                 {
-                    UserWorkShift userworkshift = new UserWorkShift();
+                    Userworkshift userworkshift = new Userworkshift();
                     userworkshift.WorkshiftId = createdWorkShift.Entity.WorkshiftId;
                     userworkshift.UserId = user.UserId;
                     workshifts.Add(userworkshift);
@@ -160,11 +197,11 @@ namespace caffeApp.ViewModels.Admin
                 context.SaveChanges();
 
                 var box = MessageBoxManager
-                .GetMessageBoxStandard("Успех",
+                .GetMessageBoxStandard("Создание смены",
                     "Смена создана",
                     ButtonEnum.Ok);
 
-                await box.ShowAsync();
+                box.ShowAsync();
             }
         }
 
@@ -182,6 +219,7 @@ namespace caffeApp.ViewModels.Admin
 
             var newListSelectedUsers = SelectedUsers.ToList().Where(x => x.UserId != SelectedFromSelectedUsers.UserId);
             SelectedUsers = new ObservableCollection<User>(newListSelectedUsers);
+            SelectedFromSelectedUsers = new();
         }
 
         private void AddUserInShift()
@@ -217,18 +255,28 @@ namespace caffeApp.ViewModels.Admin
                 }
             }
 
+            SelectedFromAllUsers = new();
             Users = new ObservableCollection<User>(newListAllUser);
             SelectedUsers = new ObservableCollection<User>(newListSelectedUsers);
         }
 
         private async Task<bool> CheckDate()
         {
+            DateTime currentDateTime = DateTime.Now;
             DateTimeOffset lastDate = new DateTimeOffset(new DateTime(currentDateTime.Year, currentDateTime.Month, currentDateTime.Day + 5));
 
             if (SelectedDate == DateTimeOffset.MinValue)
             {
+                var box = MessageBoxManager
+                .GetMessageBoxStandard("Выбор даты",
+                "Выберите корректную дату",
+                ButtonEnum.Ok);
+
+                box.ShowAsync();
+
                 return false;
-            }else if(SelectedDate < currentDateTime.ToDateTimeUnspecified())
+            }
+            else if(new DateTime(SelectedDate.Year, SelectedDate.Month, SelectedDate.Day, SelectedTimeEnd.Hours, SelectedTimeEnd.Minutes, 0) < currentDateTime)
             {
                 var box = MessageBoxManager
              .GetMessageBoxStandard("Выбор даты",

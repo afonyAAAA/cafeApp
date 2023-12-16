@@ -1,0 +1,166 @@
+<rxui:ReactiveUserControl 
+             xmlns="https://github.com/avaloniaui"
+			 xmlns:rxui="http://reactiveui.net"
+             xmlns:vm="using:caffeApp.ViewModels"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" 
+             d:DesignWidth="800" 
+             d:DesignHeight="450"
+			 x:TypeArguments="vm:ReportViewModel"
+             x:DataType="vm:ReportViewModel"
+             x:Class="caffeApp.Views.ReportView">
+	
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition></ColumnDefinition>
+			<ColumnDefinition Width="Auto"></ColumnDefinition>
+		</Grid.ColumnDefinitions>
+
+
+		<TextBlock
+			VerticalAlignment="Center"
+			HorizontalAlignment="Center"
+			Text="{Binding WarningMessage}"
+			IsVisible="{Binding IsWarning}">
+		</TextBlock>
+
+		<Button
+			Command="{Binding CreateReportAdmin}"
+			Margin="5"
+			VerticalAlignment="Bottom"
+			HorizontalAlignment="Center"
+			Height="50">
+			<TextBlock
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center">
+				Сформировать
+			</TextBlock>
+		</Button>
+
+
+		<Button
+			IsVisible="{Binding !IsAdmin}"
+			Command="{Binding CreateReportWaiter}"
+			Margin="5"
+			VerticalAlignment="Bottom"
+			HorizontalAlignment="Center"
+			Height="50">
+			<TextBlock
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center">
+				Сформировать
+			</TextBlock>
+		</Button>
+		
+		
+		
+		<StackPanel
+			Margin="20">
+			<TextBlock
+				Margin="0 10">
+				Смена
+			</TextBlock>
+			<StackPanel 
+				IsVisible="{Binding IsAdmin}"
+				Orientation="Horizontal">
+				<ComboBox
+					SelectedItem="{Binding SelectedWorkShift}"
+					SelectedIndex="{Binding}"
+					ItemsSource="{Binding Workshifts}">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<StackPanel>
+								<TextBlock Text="{Binding Date}"></TextBlock>
+								<StackPanel
+									Margin="0 2"
+									Orientation="Horizontal">
+									<TextBlock Text="{Binding Timestart}"></TextBlock>
+									<TextBlock>-</TextBlock>
+									<TextBlock Text="{Binding Timeend}"></TextBlock>
+								</StackPanel>
+							</StackPanel>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+
+				<TextBlock
+					Text="{Binding SelectedWorkShift.Date}"
+					Padding="10"
+					VerticalAlignment="Center">
+				</TextBlock>
+
+				<TextBlock Text=" "/>
+				
+				<TextBlock
+					Text="{Binding SelectedWorkShift.Timestart}"
+					Padding="10"
+					VerticalAlignment="Center">
+				</TextBlock>
+				<TextBlock Text="-" VerticalAlignment="Center"/>
+				<TextBlock
+					Text="{Binding SelectedWorkShift.Timeend}"
+					Padding="10"
+					VerticalAlignment="Center">
+				</TextBlock>
+
+				<TextBlock Text=" "/>
+
+				<TextBlock 
+					VerticalAlignment="Center"
+					FontWeight="Bold"
+					Text="Активная смена"
+					Foreground="LightGreen"
+					IsVisible="{Binding !ActiveWorkShiftNull}">
+					
+				</TextBlock>
+				
+			</StackPanel>
+
+
+			<StackPanel
+				IsVisible="{Binding !IsWarning}">
+				<DataGrid
+					IsVisible="{Binding ReportIsReady}"
+					Margin="0 10"
+					ItemsSource="{Binding Orders}">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Идентификатор" Binding="{Binding OrderId}"></DataGridTextColumn>
+						<DataGridTextColumn Header="Дата" Binding="{Binding Dateorder}"></DataGridTextColumn>
+						<DataGridTextColumn Header="Количество гостей" Binding="{Binding Quantityclients}"></DataGridTextColumn>
+						<DataGridTextColumn Header="Место" Binding="{Binding Numberplace}"></DataGridTextColumn>
+						<DataGridTextColumn Header="Статус заказа" Binding="{Binding Status}"></DataGridTextColumn>
+						<DataGridTextColumn Header="Сумма заказа" Binding="{Binding Sum}"></DataGridTextColumn>
+					</DataGrid.Columns>
+				</DataGrid>
+			</StackPanel>
+		</StackPanel>
+
+
+		<StackPanel 
+			Margin="30"
+			IsVisible="{Binding ReportIsReady}"
+			VerticalAlignment="Top"
+			Grid.Column="1">
+			<StackPanel
+				Margin="0 0 0 0"
+				IsVisible="{Binding !IsWarning}">
+				<TextBlock Margin="0 5">Количество заказов</TextBlock>
+				<TextBox Text="{Binding CountOrders}"></TextBox>
+				<TextBlock Margin="0 5">Количество заказов оплаченных картой</TextBlock>
+				<TextBox Text="{Binding CountIsCreditCard}"></TextBox>
+				<TextBlock Margin="0 5">Количество заказов оплаченных наличными</TextBlock>
+				<TextBox Text="{Binding CountIsCash}"></TextBox>
+				<TextBlock Margin="0 5">Количество неоплаченных заказов</TextBlock>
+				<TextBox Text="{Binding CountIsNotPayedOrders}"></TextBox>
+				<TextBlock Margin="0 5">Сумма выручки</TextBlock>
+				<TextBox Text="{Binding SumPay}"></TextBox>
+			</StackPanel>
+
+			
+		</StackPanel>
+	</Grid>
+	        
+	
+</rxui:ReactiveUserControl>

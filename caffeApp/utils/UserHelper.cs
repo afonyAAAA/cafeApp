@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace caffeApp.models
+namespace caffeApp.utils
 {
     public static class UserHelper
     {
@@ -23,7 +23,7 @@ namespace caffeApp.models
                 string json = File.ReadAllText(pathToFile);
                 user = JsonConvert.DeserializeObject<User>(json);
 
-                if(user == null)
+                if (user == null)
                 {
                     return null;
                 }

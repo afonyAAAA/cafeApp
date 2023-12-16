@@ -37,7 +37,13 @@
 					<DataTemplate>
 						<Border BorderBrush="Blue" BorderThickness="1"
 								CornerRadius="4" Padding="4">
-							<TextBlock Text="{Binding Fullname}"/>
+							<StackPanel>
+								<TextBlock Text="{Binding UserId}"/>
+								
+								<TextBlock Text="{Binding Fullname}"/>
+								
+								<TextBlock Text="{Binding Rolename}"/>
+							</StackPanel>
 						</Border>
 					</DataTemplate>
 				</ListBox.ItemTemplate>

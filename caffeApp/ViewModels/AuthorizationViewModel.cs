@@ -98,10 +98,14 @@ namespace caffeApp.ViewModels
         {
             var users = DbContextProvider.GetContext().Users.ToList();
             var userIsExist = users.Find(x => x.Login == Login) != null;
-            var user = users.Find(x => x.Login == Login && x.Password == Password); 
-            
+            var user = users.Find(x => x.Login == Login && x.Password == Password);
+
+
             if(user != null)
             {
+
+                user.Document = null;
+                user.Role = null;
                 saveUserInSystem(user);
                 OnAuthorizationComplete();
             }

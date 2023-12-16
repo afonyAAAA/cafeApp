@@ -17,9 +17,9 @@ public partial class Order
 
     public int? PaymentId { get; set; }
 
-    public int UserworkshiftId { get; set; }
+    public int UserId { get; set; }
 
-    public virtual ICollection<Foodorder> Foodorders { get; set; } = new List<Foodorder>();
+    public int WorkshiftId { get; set; }
 
     public virtual Payment? Payment { get; set; }
 
@@ -27,6 +27,7 @@ public partial class Order
 
     public virtual Statusorder Statusorder { get; set; } = null!;
 
-    public virtual UserWorkShift Userworkshift { get; set; } = null!;
+    public virtual User User { get; set; } = null!;
 
+    public virtual Workshift Workshift { get; set; } = null!;
 }

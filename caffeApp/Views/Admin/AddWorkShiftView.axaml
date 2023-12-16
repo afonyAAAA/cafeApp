@@ -78,6 +78,7 @@
 				<StackPanel Grid.Row="0">
 					<DataGrid
 						IsReadOnly="True"
+						Height="150"
 						CanUserReorderColumns="True"
 						CanUserResizeColumns="True"
 						CanUserSortColumns="False"
@@ -104,6 +105,7 @@
 				<StackPanel Grid.Row="1">
 					<DataGrid
 					    IsReadOnly="True"
+						Height="150"
 						Margin="0 15"
 					    CanUserReorderColumns="True"
 						CanUserResizeColumns="True"

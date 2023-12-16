@@ -25,22 +25,22 @@ namespace caffeApp.ViewModels.Admin
 
         public override ViewModelActivator Activator { get; set; }
 
-        private ObservableCollection<WorkShiftUser> _userWorkshifts;
+        private ObservableCollection<Workshiftview> _userWorkshifts;
 
         public ReactiveCommand<Unit, Unit> OpenAddWorkShift { get; }
 
-        private WorkShiftUser _selectedWorkShift;
+        private Workshiftview _selectedWorkShift;
 
-        private List<WorkShiftUser> _usersInWorkShift;
+        private List<Workshiftview> _usersInWorkShift;
 
         private bool _isClickOnWorkShift = false;
         
-        public ObservableCollection<WorkShiftUser> UserWorkShifts {
+        public ObservableCollection<Workshiftview> UserWorkShifts {
             get => _userWorkshifts;
             set => this.RaiseAndSetIfChanged(ref _userWorkshifts, value);
         }
 
-        public List<WorkShiftUser> UsersInWorkShift { 
+        public List<Workshiftview> UsersInWorkShift { 
             get => _usersInWorkShift; 
             set => this.RaiseAndSetIfChanged(ref _usersInWorkShift, value); 
         }
@@ -48,7 +48,7 @@ namespace caffeApp.ViewModels.Admin
             get => _isClickOnWorkShift; 
             set => this.RaiseAndSetIfChanged(ref _isClickOnWorkShift, value);
         }
-        public WorkShiftUser SelectedWorkShift {
+        public Workshiftview SelectedWorkShift {
             get => _selectedWorkShift;
             set => this.RaiseAndSetIfChanged(ref _selectedWorkShift, value);
         }
@@ -59,11 +59,11 @@ namespace caffeApp.ViewModels.Admin
 
             HostScreen = screen;
 
-            var shifts = DatabaseHelper.refreshEntity<WorkShiftUser>().ToList();
+            var shifts = DatabaseHelper.refreshEntity<Workshiftview>().ToList();
 
-            var groupedShifts = new List<WorkShiftUser>();
+            var groupedShifts = new List<Workshiftview>();
 
-            WorkShiftUser prevShift = null;
+            Workshiftview prevShift = null;
 
             foreach (var shift in shifts)
             {
@@ -74,7 +74,7 @@ namespace caffeApp.ViewModels.Admin
                 prevShift = shift;
             }
 
-            UserWorkShifts = new ObservableCollection<WorkShiftUser>(groupedShifts);
+            UserWorkShifts = new ObservableCollection<Workshiftview>(groupedShifts);
 
             OpenAddWorkShift = ReactiveCommand.Create(() => {
                 HostScreen.Router.Navigate.Execute(new AddWorkShiftViewModel(HostScreen));
@@ -83,7 +83,7 @@ namespace caffeApp.ViewModels.Admin
             this.WhenAnyValue(x => x.IsClickOnWorkShift).Subscribe(_ => {
                 if(SelectedWorkShift != null)
                 {
-                    UsersInWorkShift = DatabaseHelper.refreshEntity<WorkShiftUser>().Where(x => x.WorkshiftId == SelectedWorkShift.WorkshiftId).ToList();
+                    UsersInWorkShift = DatabaseHelper.refreshEntity<Workshiftview>().Where(x => x.WorkshiftId == SelectedWorkShift.WorkshiftId).ToList();
                 }  
             });
 

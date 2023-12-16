@@ -11,11 +11,11 @@ public partial class Payment
 
     public decimal Sum { get; set; }
 
-    public bool Isnoncash { get; set; }
+    public bool? Isnoncash { get; set; }
 
-    public DateTimeOffset Datepayment { get; set; }
-
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+    public DateTime Datepayment { get; set; }
 
     public virtual Statuspayment Statuspayment { get; set; } = null!;
+
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }

@@ -23,6 +23,8 @@ public partial class CafeContext : DbContext
 
     public virtual DbSet<Order> Orders { get; set; }
 
+    public virtual DbSet<Ordersview> Ordersviews { get; set; }
+
     public virtual DbSet<Payment> Payments { get; set; }
 
     public virtual DbSet<Place> Places { get; set; }
@@ -35,11 +37,11 @@ public partial class CafeContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
-    public virtual DbSet<UserWorkShift> Userworkshifts { get; set; }
+    public virtual DbSet<Userworkshift> Userworkshifts { get; set; }
 
     public virtual DbSet<Workshift> Workshifts { get; set; }
 
-    public virtual DbSet<WorkShiftUser> Workshiftusers { get; set; }
+    public virtual DbSet<Workshiftview> Workshiftviews { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
@@ -68,8 +70,7 @@ public partial class CafeContext : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");
-            entity.Property(e => e.Price)
-                .HasColumnName("price");
+            entity.Property(e => e.Price).HasColumnName("price");
         });
 
         modelBuilder.Entity<Foodorder>(entity =>
@@ -86,11 +87,6 @@ public partial class CafeContext : DbContext
                 .HasForeignKey(d => d.FoodId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_food");
-
-            entity.HasOne(d => d.Order).WithMany(p => p.Foodorders)
-                .HasForeignKey(d => d.OrderId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_order");
         });
 
         modelBuilder.Entity<Order>(entity =>
@@ -105,7 +101,8 @@ public partial class CafeContext : DbContext
             entity.Property(e => e.PlaceId).HasColumnName("place_id");
             entity.Property(e => e.Quantityclients).HasColumnName("quantityclients");
             entity.Property(e => e.StatusorderId).HasColumnName("statusorder_id");
-            entity.Property(e => e.UserworkshiftId).HasColumnName("userworkshift_id");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.WorkshiftId).HasColumnName("workshift_id");
 
             entity.HasOne(d => d.Payment).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.PaymentId)
@@ -121,10 +118,36 @@ public partial class CafeContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_statusorder");
 
-            entity.HasOne(d => d.Userworkshift).WithMany(p => p.Orders)
-                .HasForeignKey(d => d.UserworkshiftId)
+            entity.HasOne(d => d.User).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_userworkshift");
+                .HasConstraintName("fk_user");
+
+            entity.HasOne(d => d.Workshift).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.WorkshiftId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_workshift");
+        });
+
+        modelBuilder.Entity<Ordersview>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("ordersview");
+
+            entity.Property(e => e.Dateorder).HasColumnName("dateorder");
+            entity.Property(e => e.Isnoncash).HasColumnName("isnoncash");
+            entity.Property(e => e.Numberplace)
+                .HasMaxLength(10)
+                .HasColumnName("numberplace");
+            entity.Property(e => e.OrderId).HasColumnName("order_id");
+            entity.Property(e => e.Quantityclients).HasColumnName("quantityclients");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .HasColumnName("status");
+            entity.Property(e => e.Sum).HasColumnName("sum");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.WorkshiftId).HasColumnName("workshift_id");
         });
 
         modelBuilder.Entity<Payment>(entity =>
@@ -134,9 +157,7 @@ public partial class CafeContext : DbContext
             entity.ToTable("payment");
 
             entity.Property(e => e.PaymentId).HasColumnName("payment_id");
-            entity.Property(e => e.Datepayment)
-                .HasColumnType("time with time zone")
-                .HasColumnName("datepayment");
+            entity.Property(e => e.Datepayment).HasColumnName("datepayment");
             entity.Property(e => e.Isnoncash).HasColumnName("isnoncash");
             entity.Property(e => e.StatuspaymentId).HasColumnName("statuspayment_id");
             entity.Property(e => e.Sum).HasColumnName("sum");
@@ -223,16 +244,15 @@ public partial class CafeContext : DbContext
 
             entity.HasOne(d => d.Document).WithMany(p => p.Users)
                 .HasForeignKey(d => d.DocumentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_1");
+                .HasConstraintName("fk_document");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_2");
+                .HasConstraintName("fk_role");
         });
 
-        modelBuilder.Entity<UserWorkShift>(entity =>
+        modelBuilder.Entity<Userworkshift>(entity =>
         {
             entity.HasKey(e => e.UserworkshiftId).HasName("pk_userworkshift");
 
@@ -265,17 +285,17 @@ public partial class CafeContext : DbContext
             entity.Property(e => e.Timestart).HasColumnName("timestart");
         });
 
-        modelBuilder.Entity<WorkShiftUser>(entity =>
+        modelBuilder.Entity<Workshiftview>(entity =>
         {
             entity
                 .HasNoKey()
-                .ToView("workshiftusers");
+                .ToView("workshiftview");
 
             entity.Property(e => e.Date).HasColumnName("date");
             entity.Property(e => e.Fullname).HasColumnName("fullname");
-            entity.Property(e => e.Name)
+            entity.Property(e => e.Rolename)
                 .HasMaxLength(50)
-                .HasColumnName("name");
+                .HasColumnName("rolename");
             entity.Property(e => e.Time).HasColumnName("time");
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.WorkshiftId).HasColumnName("workshift_id");

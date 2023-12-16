@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace caffeApp.Desktop;
 
-public partial class UserWorkShift
+public partial class Userworkshift
 {
     public int UserworkshiftId { get; set; }
 
@@ -14,6 +14,4 @@ public partial class UserWorkShift
     public virtual Workshift Workshift { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
-
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }

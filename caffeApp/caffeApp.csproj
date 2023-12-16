@@ -44,5 +44,8 @@
     <Compile Update="Views\Admin\UsersView.axaml.cs">
       <DependentUpon>UsersView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\ReportView.axaml.cs">
+      <DependentUpon>ReportView.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

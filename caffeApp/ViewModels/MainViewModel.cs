@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Markup.Xaml;
 using caffeApp.Desktop;
-using caffeApp.models;
+using caffeApp.utils;
 using caffeApp.ViewModels.Admin;
 using DynamicData.Binding;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -25,6 +25,7 @@ public class MainViewModel : ReactiveObject, IScreen, IActivatableViewModel, IAu
     public ReactiveCommand<Unit, IRoutableViewModel> OpenUserView { get; }
     public ReactiveCommand<Unit, IRoutableViewModel> OpenShiftView { get; }
     public ReactiveCommand<Unit, IRoutableViewModel> OpenOrdersView { get; }
+    public ReactiveCommand<Unit, IRoutableViewModel> OpenReportView { get; }
     public ReactiveCommand<Unit, Unit> LogOut { get; }
     public ReactiveCommand<Unit, IRoutableViewModel> GoBack => Router.NavigateBack;
 
@@ -141,6 +142,10 @@ public class MainViewModel : ReactiveObject, IScreen, IActivatableViewModel, IAu
 
         OpenUserView = ReactiveCommand.CreateFromObservable(
             () => Router.Navigate.Execute(new UsersViewModel(this))
+        );
+
+        OpenReportView = ReactiveCommand.CreateFromObservable(
+            () => Router.Navigate.Execute(new ReportViewModel(this))
         );
 
         LogOut = ReactiveCommand.Create(() => {

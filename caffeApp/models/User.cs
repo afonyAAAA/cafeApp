@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace caffeApp.Desktop;
 
@@ -23,11 +24,17 @@ public partial class User
 
     public int RoleId { get; set; }
 
+    [JsonIgnore]
     public virtual Document? Document { get; set; }
 
+    [JsonIgnore]
     public virtual Role Role { get; set; } = null!;
 
-    public string getFullName() => FirstName + " " + SecondName + " " + Surname;
+    [JsonIgnore]
+    public virtual ICollection<Userworkshift> Userworkshifts { get; set; } = new List<Userworkshift>();
 
-    public virtual ICollection<UserWorkShift> Userworkshifts { get; set; } = new List<UserWorkShift>();
+    [JsonIgnore]
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+
+    public string getFullName() => FirstName + " " + SecondName + " " + Surname;
 }

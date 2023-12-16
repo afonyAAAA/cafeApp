@@ -55,16 +55,17 @@
 			<StackPanel IsVisible="{Binding AdminFunctionalIsOpen}">
 				<Button Content="Смены" Command="{Binding OpenShiftView}" />
 				<Button Content="Сотрудники" Command="{Binding OpenUserView}" />
+				<Button Content="Заказы" Command="{Binding OpenOrdersView}" />
+				<Button Content="Отчёт" Command="{Binding OpenReportView}" />
 			</StackPanel>
 
 			<StackPanel IsVisible="{Binding WaiterFunctionalIsOpen}">
 				<Button Content="Заказы" Command="{Binding OpenOrdersView}" />
-				<Button Content="Смены" Command="{Binding OpenShiftView}" />
+				<Button Content="Отчёт" Command="{Binding OpenReportView}" />
 			</StackPanel>
 
 			<StackPanel IsVisible="{Binding SheffFunctionalIsOpen}">
-				<Button Content="Заказы" Command="{Binding OpenUserView}" />
-				<Button Content="Смены" Command="{Binding OpenShiftView}" />
+				<Button Content="Заказы" Command="{Binding OpenOrdersView}" />
 			</StackPanel>
 
 			<Button
