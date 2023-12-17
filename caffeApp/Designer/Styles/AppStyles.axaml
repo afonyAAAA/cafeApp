@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.PreviewWith>
         <Border Padding="20">
-			<TextBlock Classes="Sub">fffff</TextBlock>
+			<Button Classes="N">fdfsdfsdfsfd</Button>
         </Border>
 		
     </Design.PreviewWith>
@@ -22,7 +22,33 @@
 		<Setter Property="CornerRadius" Value="15"/>
 		<Setter Property="LineHeight" Value="20"/>
 	</Style>
-	
+
+
+	<Style Selector="Button.N">
+		<Setter Property="Height" Value="60" />
+		<Setter Property="Width" Value="130" />
+		
+		<Setter Property="Background" Value="#2196F3"/>
+		<!-- Цвет фона кнопки -->
+		<Setter Property="Foreground" Value="White"/>
+		<!-- Цвет текста кнопки -->
+		<Setter Property="BorderBrush" Value="#1976D2"/>
+		<!-- Цвет границы кнопки -->
+		<Setter Property="BorderThickness" Value="1"/>
+		<!-- Толщина границы кнопки -->
+		<Setter Property="CornerRadius" Value="5"/>
+		<!-- Закругление углов -->
+		<Setter Property="Padding" Value="10"/>
+		<!-- Внутренний отступ -->
+		<Setter Property="FontSize" Value="14"/>
+		<!-- Размер шрифта -->
+		<Setter Property="Cursor" Value="Hand"/>
+		<!-- Изменение формы указателя при наведении -->
+		<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		<!-- Горизонтальное выравнивание текста -->
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
+		<!-- Вертикальное выравнивание текста -->
+	</Style>
 
     <!-- Add Styles Here -->
 </Styles>

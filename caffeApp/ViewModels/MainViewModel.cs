@@ -26,14 +26,17 @@ public class MainViewModel : ReactiveObject, IScreen, IActivatableViewModel, IAu
     public ReactiveCommand<Unit, IRoutableViewModel> OpenShiftView { get; }
     public ReactiveCommand<Unit, IRoutableViewModel> OpenOrdersView { get; }
     public ReactiveCommand<Unit, IRoutableViewModel> OpenReportView { get; }
+    public ReactiveCommand<Unit, Unit> OpenMainWindow { get; }
     public ReactiveCommand<Unit, Unit> LogOut { get; }
     public ReactiveCommand<Unit, IRoutableViewModel> GoBack => Router.NavigateBack;
+    public ReactiveCommand<Unit, Unit> ChangeStatePanel { get; }
 
     private User _user;
     private bool _adminFunctionalIsOpen;
     private bool _sheffFunctionalIsOpen;
     private bool _waiterFunctionalIsOpen;
     private bool _isNotAuthorizedUser;
+    private bool _isPanelCollapsed;
 
     public User User
     {
@@ -95,12 +98,18 @@ public class MainViewModel : ReactiveObject, IScreen, IActivatableViewModel, IAu
         }
     }
 
+    public bool IsPanelCollapsed {
+        get => _isPanelCollapsed;
+        set => this.RaiseAndSetIfChanged(ref _isPanelCollapsed, value);
+    }
+
     public MainViewModel()
     {
         _adminFunctionalIsOpen = false;
         _sheffFunctionalIsOpen = false;
         _waiterFunctionalIsOpen = false;
         _isNotAuthorizedUser = true;
+        _isPanelCollapsed = false;
 
         this.WhenActivated(disposables =>
         {
@@ -132,6 +141,11 @@ public class MainViewModel : ReactiveObject, IScreen, IActivatableViewModel, IAu
             }).DisposeWith(disposables);
         });
 
+        ChangeStatePanel = ReactiveCommand.Create(() =>
+        {
+            IsPanelCollapsed = !IsPanelCollapsed;
+        });
+
         OpenShiftView = ReactiveCommand.CreateFromObservable(
             () => Router.Navigate.Execute(new ShiftViewModel(this))
         );
@@ -146,6 +160,10 @@ public class MainViewModel : ReactiveObject, IScreen, IActivatableViewModel, IAu
 
         OpenReportView = ReactiveCommand.CreateFromObservable(
             () => Router.Navigate.Execute(new ReportViewModel(this))
+        );
+
+        OpenMainWindow = ReactiveCommand.Create(
+            () => Router.NavigationStack.Clear()
         );
 
         LogOut = ReactiveCommand.Create(() => {

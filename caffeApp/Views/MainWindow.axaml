@@ -7,12 +7,13 @@
         xmlns:views="using:caffeApp.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="caffeApp.Views.MainWindow"
+		xmlns:styles="clr-namespace:Avalonia.Markup.Xaml.Styling;assembly=Avalonia.Markup.Xaml"
 		x:DataType="vm:MainViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="caffeApp">
 
 	<Window.Background>
-        <SolidColorBrush Color="LightYellow"/>
+        <SolidColorBrush Color="Yellow"/>
     </Window.Background>
 
 	<Window.Styles>
@@ -31,53 +32,107 @@
 		
 		<rxui:RoutedViewHost Grid.Column="1" Router="{Binding Router}">
 			<rxui:RoutedViewHost.DefaultContent>
-				<TextBlock 
-					Classes="Sub"
-					Text="Добро пожаловать!"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center" />
+				<Image
+					Height="200"
+					Source="/Assets/cafe.png">
+				</Image>
 			</rxui:RoutedViewHost.DefaultContent>
 			<rxui:RoutedViewHost.ViewLocator>
 				<!-- See AppViewLocator.cs section below -->
 				<views:AppViewLocator />
 			</rxui:RoutedViewHost.ViewLocator>
 		</rxui:RoutedViewHost>
-		<StackPanel Grid.Column="0" Orientation="Vertical" Margin="15">
+
+		<Button 
+			IsVisible="{Binding IsPanelCollapsed}"
+			Command="{Binding ChangeStatePanel}"
+			Classes="N"
+			VerticalAlignment="Center"
+			Height="30"
+			Width="40"
+			Margin="18">
+			<TextBlock
+				FontSize="18"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				Text="→">
+			</TextBlock>
+		</Button>
+		
+		<StackPanel IsVisible="{Binding !IsPanelCollapsed}" Grid.Column="0" Orientation="Vertical" Margin="15">
 			<StackPanel.Styles>
 				<Style Selector="StackPanel > :is(Control)">
 					<Setter Property="Margin" Value="2"/>
 				</Style>
 				<Style Selector="StackPanel > TextBlock">
-					<Setter Property="VerticalAlignment" Value="Center"/>
+					<Setter Property="VerticalAlignment" Value="Top"/>
 				</Style>
+			
 			</StackPanel.Styles>
 
 			<StackPanel IsVisible="{Binding AdminFunctionalIsOpen}">
-				<Button Content="Смены" Command="{Binding OpenShiftView}" />
-				<Button Content="Сотрудники" Command="{Binding OpenUserView}" />
-				<Button Content="Заказы" Command="{Binding OpenOrdersView}" />
-				<Button Content="Отчёт" Command="{Binding OpenReportView}" />
+				<Button
+					Command="{Binding ChangeStatePanel}"
+					Classes="N"
+					Height="30">
+					<TextBlock
+						FontSize="18"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Text="←">
+					</TextBlock>
+				</Button>
+				<Button Classes="N" Content="Главная" Command="{Binding OpenMainWindow}" />
+				<Button Classes="N" Content="Смены" Command="{Binding OpenShiftView}" />
+				<Button Classes="N" Content="Сотрудники" Command="{Binding OpenUserView}" />
+				<Button Classes="N" Content="Заказы" Command="{Binding OpenOrdersView}" />
+				<Button Classes="N" Content="Отчёт" Command="{Binding OpenReportView}" />
 			</StackPanel>
 
 			<StackPanel IsVisible="{Binding WaiterFunctionalIsOpen}">
-				<Button Content="Заказы" Command="{Binding OpenOrdersView}" />
-				<Button Content="Отчёт" Command="{Binding OpenReportView}" />
+				<Button
+					Command="{Binding ChangeStatePanel}"
+					Classes="N"
+					Height="30">
+					<TextBlock
+						FontSize="18"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Text="←">
+					</TextBlock>
+				</Button>
+				<Button Classes="N" Content="Главная" Command="{Binding OpenMainWindow}" />
+				<Button Classes="N" Content="Заказы" Command="{Binding OpenOrdersView}" />
+				<Button Classes="N" Content="Отчёт" Command="{Binding OpenReportView}" />
 			</StackPanel>
 
 			<StackPanel IsVisible="{Binding SheffFunctionalIsOpen}">
-				<Button Content="Заказы" Command="{Binding OpenOrdersView}" />
+				<Button
+					Command="{Binding ChangeStatePanel}"
+					Classes="N"
+					Height="30">
+					<TextBlock
+						FontSize="18"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Text="←">
+					</TextBlock>
+				</Button>
+				<Button Classes="N" Content="Главная" Command="{Binding OpenMainWindow}" />
+				<Button Classes="N" Content="Заказы" Command="{Binding OpenOrdersView}" />
 			</StackPanel>
 
-			<Button
-				Margin="4"
-				IsVisible="{Binding !IsNotAuthorizedUser}"
-				VerticalAlignment="Bottom"
-				Content="Выйти"
-				Command="{Binding LogOut}"
-			 />
 
 		</StackPanel>
-	</Grid>
 
+		<Button
+			Classes="N"
+			Margin="18"
+			IsVisible="{Binding !IsNotAuthorizedUser}"
+			VerticalAlignment="Bottom"
+			Content="Выйти"
+			Command="{Binding LogOut}"
+			 />
+	</Grid>
 
 </Window>
