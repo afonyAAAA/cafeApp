@@ -1,13 +1,17 @@
 ﻿using caffeApp.Desktop;
 using caffeApp.utils;
+using OfficeOpenXml;
 using ReactiveUI;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Reactive;
-using System.Text;
 using System.Threading.Tasks;
+using Avalonia.Controls;
+using System.Reactive.Linq;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace caffeApp.ViewModels
 {
@@ -19,7 +23,7 @@ namespace caffeApp.ViewModels
 
         public override ViewModelActivator Activator { get; set; }
 
-        private ObservableCollection<Ordersview> _orders;
+        private ObservableCollection<Order> _orders;
 
         private ObservableCollection<Workshift> _workshifts;
 
@@ -51,7 +55,7 @@ namespace caffeApp.ViewModels
 
         private int _indexWorkShift;
 
-        public ObservableCollection<Ordersview> Orders
+        public ObservableCollection<Order> Orders
         {
             get => _orders;
             set => this.RaiseAndSetIfChanged(ref _orders, value);
@@ -144,7 +148,10 @@ namespace caffeApp.ViewModels
         }
 
         public ReactiveCommand<Unit, Unit> CreateReportWaiter { get; }
+
         public ReactiveCommand<Unit, Unit> CreateReportAdmin { get; }
+
+        public ReactiveCommand<Unit, Unit> SaveReport { get; }
         
 
         public ReportViewModel(IScreen screen)
@@ -223,19 +230,30 @@ namespace caffeApp.ViewModels
 
                 ReportIsReady = true;
             });
+
+            SaveReport = ReactiveCommand.CreateFromTask(async () => {
+                var package = await ExportReportInExcel();
+                await SaveFileAsAsync(package);
+            });
         }
 
 
         private string? CreataReportOfSelectedWorkShift()
         {
-            Orders = DatabaseHelper.refreshEntity<Ordersview>();
+            Orders = DatabaseHelper.refreshEntity<Order>(
+                x => x.Payment, 
+                x => x.Place, 
+                x => x.Workshift, 
+                x => x.User,
+                x => x.Statusorder
+            );
 
             if (Orders.Count == 0)
             {
                 return "В настоящее время ещё нет заказов";
             }
 
-            var listOrdersOfSelectedWorkShift = DatabaseHelper.refreshEntity<Ordersview>()
+            var listOrdersOfSelectedWorkShift = DatabaseHelper.refreshEntity<Order>()
                 .Where(x => x.WorkshiftId == SelectedWorkShift.WorkshiftId);
 
             var countOrders = listOrdersOfSelectedWorkShift.Count();
@@ -245,20 +263,100 @@ namespace caffeApp.ViewModels
                 return "В эту смену не было заказов";
             }
 
-            SumPay = (decimal)listOrdersOfSelectedWorkShift.Sum(x => x.Sum);
+            SumPay = listOrdersOfSelectedWorkShift.Sum(x => x.Payment.Sum);
             CountOrders = countOrders;
-            CountIsCash = listOrdersOfSelectedWorkShift.Where(x => (bool)!x.Isnoncash).Count();
-            CountIsNotPayedOrders = listOrdersOfSelectedWorkShift.Where(x => x.Isnoncash == null).Count();
-            CountIsCreditCard = listOrdersOfSelectedWorkShift.Where(x => (bool)x.Isnoncash).Count();
+            CountIsCash = listOrdersOfSelectedWorkShift.Where(x => (bool)!x.Payment.Isnoncash).Count();
+            CountIsNotPayedOrders = listOrdersOfSelectedWorkShift.Where(x => x.Payment.Isnoncash == null).Count();
+            CountIsCreditCard = listOrdersOfSelectedWorkShift.Where(x => (bool)x.Payment.Isnoncash).Count();
             Orders = new(listOrdersOfSelectedWorkShift);
 
+
             return null;
+        }
+
+        private async Task<ExcelPackage?> ExportReportInExcel()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            try
+            {
+                var package = new ExcelPackage();
+                
+                if (Orders != null && Orders.Any())
+                {
+                    var worksheet = package.Workbook.Worksheets.Add("Отчёт");
+
+                    // Добавление содержимого в документ
+                    worksheet.Cells.LoadFromCollection(Orders, true);
+
+                    int lastUsedRow = worksheet.Dimension?.End.Row + 1 ?? 1;
+
+                    worksheet.Cells[lastUsedRow, 1].Value = CountOrders;
+                    worksheet.Cells[lastUsedRow, 2].Value = CountIsCash;
+                    worksheet.Cells[lastUsedRow, 3].Value = CountIsNotPayedOrders;
+                    worksheet.Cells[lastUsedRow, 4].Value = CountIsCreditCard;
+                    worksheet.Cells[lastUsedRow, 5].Value = SumPay;
+
+                    package.Save();
+
+                    return package;
+                }
+                else
+                {
+                    Debug.WriteLine("Orders collection is empty.");
+                    return null;
+                }
+                
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"An error occurred during Excel export: {e}");
+                return null;
+            }
+        }
+
+        [Obsolete]
+        private async Task SaveFileAsAsync(ExcelPackage package)
+        {
+            try
+            {
+                var saveFileDialog = new SaveFileDialog
+                {
+                    Title = "Save Excel File",
+                    DefaultExtension = "xlsx",
+                    Filters = new List<FileDialogFilter>
+                {
+                    new FileDialogFilter { Name = "Excel Files", Extensions = new List<string> { "xlsx" } }
+                }
+                };
+
+                var result = await saveFileDialog.ShowAsync(new Window());
+
+                if (result != null)
+                {
+                    await package.SaveAsAsync(result);
+                }
+                else
+                {
+
+                }
+            }
+            catch(Exception ex) 
+            {
+                Debug.WriteLine(ex);
+            }
         }
 
         private string? CreateReportActiveWorkShift()
         {
 
-            Orders = DatabaseHelper.refreshEntity<Ordersview>();
+            Orders = DatabaseHelper.refreshEntity<Order>(
+                 x => x.Payment,
+                 x => x.Place,
+                 x => x.Workshift,
+                 x => x.User,
+                 x => x.Statusorder
+            );
 
             if (Orders.Count == 0)
             {
@@ -272,7 +370,7 @@ namespace caffeApp.ViewModels
                 return "В настоящее время нет активной смены";
             }
 
-            var listOrdersOfActiveWorkShift = DatabaseHelper.refreshEntity<Ordersview>()
+            var listOrdersOfActiveWorkShift = DatabaseHelper.refreshEntity<Order>()
                 .Where(x => x.WorkshiftId == activeWorkShiftid.WorkshiftId);
 
             var countOrders = listOrdersOfActiveWorkShift.Count();
@@ -282,11 +380,11 @@ namespace caffeApp.ViewModels
                 return "В настоящее время ещё нет за активную смену";
             }
 
-            SumPay = (decimal)listOrdersOfActiveWorkShift.Sum(x => x.Sum);
+            SumPay = listOrdersOfActiveWorkShift.Sum(x => x.Payment.Sum);
             CountOrders = countOrders;
-            CountIsCash = listOrdersOfActiveWorkShift.Where(x => (bool)!x.Isnoncash).Count();
-            CountIsNotPayedOrders = listOrdersOfActiveWorkShift.Where(x => x.Isnoncash == null).Count();
-            CountIsCreditCard = listOrdersOfActiveWorkShift.Where(x => (bool)x.Isnoncash).Count();
+            CountIsCash = listOrdersOfActiveWorkShift.Where(x => (bool)!x.Payment.Isnoncash).Count();
+            CountIsNotPayedOrders = listOrdersOfActiveWorkShift.Where(x => x.Payment.Isnoncash == null).Count();
+            CountIsCreditCard = listOrdersOfActiveWorkShift.Where(x => (bool)x.Payment.Isnoncash).Count();
             Orders = new(listOrdersOfActiveWorkShift);
 
             return null;
@@ -294,7 +392,13 @@ namespace caffeApp.ViewModels
 
         private string? CreateReportOfWaiter()
         {
-            Orders = DatabaseHelper.refreshEntity<Ordersview>();
+            Orders = DatabaseHelper.refreshEntity<Order>(
+                x => x.Payment,
+                x => x.Place,
+                x => x.Workshift,
+                x => x.User,
+                x => x.Statusorder
+            );
 
             if (Orders.Count == 0)
             {
@@ -318,7 +422,7 @@ namespace caffeApp.ViewModels
                 return "В настоящее время вы не состоите в активной смене";
             }
 
-            var listOrdersOfActiveWorkShift = DatabaseHelper.refreshEntity<Ordersview>()
+            var listOrdersOfActiveWorkShift = DatabaseHelper.refreshEntity<Order>()
                 .Where(x => x.WorkshiftId == activeWorkShiftid.WorkshiftId && x.UserId == userId);
 
             var countOrders = listOrdersOfActiveWorkShift.Count();
@@ -328,11 +432,11 @@ namespace caffeApp.ViewModels
                 return "В настоящее время ещё нет за активную смену";
             }
 
-            SumPay = (decimal)listOrdersOfActiveWorkShift.Sum(x => x.Sum);
+            SumPay = listOrdersOfActiveWorkShift.Sum(x => x.Payment.Sum);
             CountOrders = countOrders;
-            CountIsCash = listOrdersOfActiveWorkShift.Where(x => (bool)!x.Isnoncash).Count();
-            CountIsCreditCard = listOrdersOfActiveWorkShift.Where(x => (bool)x.Isnoncash).Count();
-            CountIsNotPayedOrders = listOrdersOfActiveWorkShift.Where(x => x.Isnoncash == null).Count();
+            CountIsCash = listOrdersOfActiveWorkShift.Where(x => (bool)!x.Payment.Isnoncash).Count();
+            CountIsNotPayedOrders = listOrdersOfActiveWorkShift.Where(x => x.Payment.Isnoncash == null).Count();
+            CountIsCreditCard = listOrdersOfActiveWorkShift.Where(x => (bool)x.Payment.Isnoncash).Count();
             Orders = new(listOrdersOfActiveWorkShift);
 
             return null;

@@ -2,30 +2,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
-using Avalonia.Dialogs;
 using System.Reactive;
 using System.Reactive.Disposables;
 using Avalonia.Media.Imaging;
 using System.Reactive.Linq;
-using Npgsql.Replication;
 using System.IO;
 using caffeApp.Sources;
 using caffeApp.Desktop;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using caffeApp.models;
-using System.Reflection.Metadata;
 using MsBox.Avalonia.Enums;
 using MsBox.Avalonia;
 using System.Collections.ObjectModel;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore;
-using System.Security.AccessControl;
 
 namespace caffeApp.ViewModels.Admin
 {
@@ -196,6 +185,7 @@ namespace caffeApp.ViewModels.Admin
             };
 
             var result = await dialog.ShowAsync(GetWindow());
+
             string path = null;
 
             if (result != null && result.Any())
