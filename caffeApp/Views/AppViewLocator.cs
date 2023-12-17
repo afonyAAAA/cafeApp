@@ -19,7 +19,6 @@ namespace caffeApp.Views
             AddWorkShiftViewModel context => new AddWorkShiftView { DataContext = context},
             AddOrderViewModel context => new AddOrderView {  DataContext = context },
             OrdersViewModel context => new OrdersView {DataContext = context },
-            ReportViewModel context => new ReportView { DataContext = context},
             _ => throw new ArgumentOutOfRangeException(nameof(viewModel))
         };
     }

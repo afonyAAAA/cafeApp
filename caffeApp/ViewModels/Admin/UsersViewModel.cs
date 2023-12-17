@@ -52,6 +52,7 @@ namespace caffeApp.ViewModels.Admin
 
         public ReactiveCommand<Unit, Unit> OpenRegistrationView { get; }
         public ReactiveCommand<Unit, Unit> SetStatusFired { get; }
+        public ReactiveCommand<Unit, Unit> UnselectUser { get; }
 
         public UsersViewModel(IScreen screen)
         {
@@ -66,6 +67,11 @@ namespace caffeApp.ViewModels.Admin
             SetStatusFired = ReactiveCommand.Create(() =>
             {
                 setStatusFired(SelectedUser);
+            });
+
+            UnselectUser = ReactiveCommand.Create(() =>
+            {
+                SelectedUserIsVisible = false;
             });
 
             this.WhenActivated((disposables) =>

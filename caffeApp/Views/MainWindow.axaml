@@ -86,7 +86,6 @@
 				<Button Classes="N" Content="Смены" Command="{Binding OpenShiftView}" />
 				<Button Classes="N" Content="Сотрудники" Command="{Binding OpenUserView}" />
 				<Button Classes="N" Content="Заказы" Command="{Binding OpenOrdersView}" />
-				<Button Classes="N" Content="Отчёт" Command="{Binding OpenReportView}" />
 			</StackPanel>
 
 			<StackPanel IsVisible="{Binding WaiterFunctionalIsOpen}">
@@ -103,7 +102,6 @@
 				</Button>
 				<Button Classes="N" Content="Главная" Command="{Binding OpenMainWindow}" />
 				<Button Classes="N" Content="Заказы" Command="{Binding OpenOrdersView}" />
-				<Button Classes="N" Content="Отчёт" Command="{Binding OpenReportView}" />
 			</StackPanel>
 
 			<StackPanel IsVisible="{Binding SheffFunctionalIsOpen}">
@@ -121,10 +119,12 @@
 				<Button Classes="N" Content="Главная" Command="{Binding OpenMainWindow}" />
 				<Button Classes="N" Content="Заказы" Command="{Binding OpenOrdersView}" />
 			</StackPanel>
-
-
 		</StackPanel>
 
+		<StackPanel
+			IsVisible="{Binding !IsPanelCollapsed}">
+			
+		</StackPanel>
 		<Button
 			Classes="N"
 			Margin="18"

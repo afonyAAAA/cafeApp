@@ -12,17 +12,26 @@
 		<Setter Property="FontWeight" Value="Bold"/>
 	</Style>
 
-	<Style Selector="TextBlock.Sub">
-		<Setter Property="FontSize" Value="18"/>
-		<Setter Property="FontWeight" Value="Medium"/>
-	</Style>
-
 	<Style Selector="TextBox.P">
 		<Setter Property="Background" Value="Gainsboro"/>
 		<Setter Property="CornerRadius" Value="15"/>
 		<Setter Property="LineHeight" Value="20"/>
 	</Style>
 
+
+	<Style Selector="TextBox.N">
+		<Setter Property="FontSize" Value="14"/>
+		<Setter Property="Padding" Value="8"/>
+		<Setter Property="Watermark" Value="Введите текст..."/>
+		<Setter Property="Margin" Value="0,0,0,8"/>
+		<Setter Property="BorderBrush" Value="#BDBDBD"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="CornerRadius" Value="5"/>
+		<Setter Property="Background" Value="#FFFFFF"/>
+		<Setter Property="Foreground" Value="#000000"/>
+		<Setter Property="CaretBrush" Value="#2196F3"/>
+		<Setter Property="SelectionBrush" Value="#2196F3"/>
+	</Style>
 
 	<Style Selector="Button.N">
 		<Setter Property="Height" Value="60" />
@@ -50,5 +59,49 @@
 		<!-- Вертикальное выравнивание текста -->
 	</Style>
 
-    <!-- Add Styles Here -->
+	<Style Selector="DataGrid.N">
+		<Setter Property="Background" Value="White"/>
+		<Setter Property="Foreground" Value="Black"/>
+		<Setter Property="BorderBrush" Value="#BDBDBD"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="GridLinesVisibility" Value="All"/>
+		<Setter Property="RowHeight" Value="30"/>
+		<Setter Property="SelectionMode" Value="Single"/>
+		<Setter Property="CanUserReorderColumns" Value="True"/>
+		<Setter Property="CanUserSortColumns" Value="True"/>
+		<Setter Property="CanUserResizeColumns" Value="False"/>
+		<Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+		<Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+	</Style>
+
+	<Style Selector="ComboBox.N">
+		<Setter Property="FontSize" Value="14"/>
+		<Setter Property="Padding" Value="8"/>
+		<Setter Property="Margin" Value="0,0,0,8"/>
+		<Setter Property="BorderBrush" Value="#BDBDBD"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="CornerRadius" Value="5"/>
+		<Setter Property="Background" Value="#FFFFFF"/>
+		<Setter Property="Foreground" Value="#000000"/>
+	</Style>
+
+	<Style Selector="TextBlock.Sub">
+		<Setter Property="FontSize" Value="18"/>
+		<Setter Property="FontWeight" Value="Bold"/>
+		<Setter Property="Margin" Value="0,0,0,8"/>
+		<Setter Property="Foreground" Value="#2196F3"/>
+	</Style>
+
+	<Style Selector="ListBox.N">
+		<Setter Property="FontSize" Value="14"/>
+		<Setter Property="Padding" Value="8"/>
+		<Setter Property="Margin" Value="0,0,0,8"/>
+		<Setter Property="BorderBrush" Value="#BDBDBD"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="CornerRadius" Value="5"/>
+		<Setter Property="Background" Value="#FFFFFF"/>
+		<Setter Property="Foreground" Value="#000000"/>
+	</Style>
+
+	<!-- Add Styles Here -->
 </Styles>

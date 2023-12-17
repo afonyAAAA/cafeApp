@@ -9,27 +9,42 @@
 			 x:TypeArguments="vm:ShiftViewModel"
 			 x:Class="caffeApp.Views.Admin.ShiftView">
 
+
+
+	<UserControl.Background>
+		<SolidColorBrush Color="Yellow"/>
+	</UserControl.Background>
+
+	<UserControl.Styles>
+		<Styles>
+			<StyleInclude Source="avares://caffeApp/Designer/Styles/AppStyles.axaml"/>
+			<!-- Добавьте другие стили, если необходимо -->
+		</Styles>
+	</UserControl.Styles>
+	
+	
 	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition></ColumnDefinition>
-			<ColumnDefinition></ColumnDefinition>
-		</Grid.ColumnDefinitions>
+		<StackPanel 
+			Margin="30"
+			IsVisible="{Binding IsClickOnWorkShift}">
 
-
-		<TextBlock
-			HorizontalAlignment="Center"
-			VerticalAlignment="Center"
-			IsVisible="{Binding !IsClickOnWorkShift}">
-			Выберите смену
-		</TextBlock>
-
-		<StackPanel IsVisible="{Binding IsClickOnWorkShift}">
-			<TextBlock
-				Margin="10"
-				HorizontalAlignment="Center">
-				Работники на смене
+			<TextBlock 
+				Classes="Sub">
+				Дата смены
 			</TextBlock>
+			<TextBlock
+				Margin="0 5"
+				Text="{Binding SelectedWorkShift.Date}">
+			</TextBlock>
+			
+			<TextBlock Classes="Sub">Продолжительность смены</TextBlock>
+			<TextBlock Margin="0 5" Text="{Binding SelectedWorkShift.Time}"></TextBlock>
+			
+			
+			<TextBlock Classes="Sub" Margin="0 5">Сотрудники на смене</TextBlock>
+			
 			<ListBox 
+				Classes="N"
 				Margin="30"
 				HorizontalAlignment="Center"
 				ItemsSource="{Binding UsersInWorkShift}">
@@ -39,26 +54,32 @@
 								CornerRadius="4" Padding="4">
 							<StackPanel>
 								<TextBlock Text="{Binding UserId}"/>
-								
+								<TextBlock Text="|"></TextBlock>
 								<TextBlock Text="{Binding Fullname}"/>
-								
+								<TextBlock Text="|"></TextBlock>
 								<TextBlock Text="{Binding Rolename}"/>
 							</StackPanel>
 						</Border>
 					</DataTemplate>
 				</ListBox.ItemTemplate>
-
 			</ListBox>
+
+			<Button
+			Classes="N"
+			Command="{Binding UnselectWorkshift}"
+			Margin="0 10">
+				Назад
+			</Button>
 		</StackPanel>
 
 		
 		<StackPanel 
-			Grid.Column="1"
+			IsVisible="{Binding !IsClickOnWorkShift}"
 			Margin="10"
 			HorizontalAlignment="Center">
-			<TextBlock>Смены</TextBlock>
 
 			<DataGrid
+				Classes="N"
 				SelectedItem="{Binding SelectedWorkShift}"
 				HorizontalAlignment="Center"
 				Margin="30"
@@ -70,6 +91,8 @@
 			</DataGrid>
 
 			<Button
+				Classes="N"
+				HorizontalAlignment="Center"
 				Command="{Binding OpenAddWorkShift}"
 				Margin="0 10">
 				Добавить

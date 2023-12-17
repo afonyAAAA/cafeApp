@@ -28,6 +28,7 @@ namespace caffeApp.ViewModels.Admin
         private ObservableCollection<Workshiftview> _userWorkshifts;
 
         public ReactiveCommand<Unit, Unit> OpenAddWorkShift { get; }
+        public ReactiveCommand<Unit, Unit> UnselectWorkshift { get; }
 
         private Workshiftview _selectedWorkShift;
 
@@ -78,6 +79,10 @@ namespace caffeApp.ViewModels.Admin
 
             OpenAddWorkShift = ReactiveCommand.Create(() => {
                 HostScreen.Router.Navigate.Execute(new AddWorkShiftViewModel(HostScreen));
+            });
+
+            UnselectWorkshift = ReactiveCommand.Create(() => {
+                IsClickOnWorkShift = false;
             });
 
             this.WhenAnyValue(x => x.IsClickOnWorkShift).Subscribe(_ => {
