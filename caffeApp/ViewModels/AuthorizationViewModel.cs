@@ -106,6 +106,8 @@ namespace caffeApp.ViewModels
 
                 user.Document = null;
                 user.Role = null;
+                user.Userworkshifts = null;
+                user.Orders = null;
                 saveUserInSystem(user);
                 OnAuthorizationComplete();
             }

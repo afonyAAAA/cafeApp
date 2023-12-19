@@ -45,7 +45,7 @@ public partial class CafeContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=cafe;Username=postgres;Password=postgres");
+        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=cafeHamster;Username=postgres;Password=admin123");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -142,9 +142,12 @@ public partial class CafeContext : DbContext
                 .HasColumnName("numberplace");
             entity.Property(e => e.OrderId).HasColumnName("order_id");
             entity.Property(e => e.Quantityclients).HasColumnName("quantityclients");
-            entity.Property(e => e.Status)
+            entity.Property(e => e.StatusOrder)
                 .HasMaxLength(50)
-                .HasColumnName("status");
+                .HasColumnName("status_order");
+            entity.Property(e => e.StatusPayment)
+                .HasMaxLength(50)
+                .HasColumnName("status_payment");
             entity.Property(e => e.Sum).HasColumnName("sum");
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.WorkshiftId).HasColumnName("workshift_id");
@@ -259,8 +262,14 @@ public partial class CafeContext : DbContext
             entity.ToTable("userworkshift");
 
             entity.Property(e => e.UserworkshiftId).HasColumnName("userworkshift_id");
+            entity.Property(e => e.PlaceId).HasColumnName("place_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.WorkshiftId).HasColumnName("workshift_id");
+
+            entity.HasOne(d => d.Place).WithMany(p => p.Userworkshifts)
+                .HasForeignKey(d => d.PlaceId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("fk_place");
 
             entity.HasOne(d => d.User).WithMany(p => p.Userworkshifts)
                 .HasForeignKey(d => d.UserId)

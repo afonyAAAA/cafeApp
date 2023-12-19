@@ -135,6 +135,7 @@ join "User" u ON u.user_Id = uw.user_id
 join "role" r on r.role_id = u.role_id
 join workshift w on w.workshift_id = uw.workshift_Id 
 
+
 create or replace view OrdersView as
 select
     distinct o.order_id,
@@ -144,8 +145,10 @@ select
     u.user_id,
     p2.isnoncash,
     p2.sum,
-    s."name" as Status,
-    o.workshift_id
+    s."name" as Status_Order,
+    o.workshift_id,
+    s2.name as Status_Payment
+    
 from
     "Order" o
     join statusorder s ON o.statusorder_id = s.statusorder_id
@@ -153,3 +156,4 @@ from
     join payment p2 on p2.payment_id = o.payment_id
     join "User" u ON u.user_id = o.user_id
     join userworkshift uw on uw.user_id = o.user_id
+    join statuspayment s2 on p2.statuspayment_id = s2.statuspayment_id

@@ -1,236 +1,364 @@
 <rxui:ReactiveUserControl
-	         xmlns="https://github.com/avaloniaui"
-			 xmlns:rxui="http://reactiveui.net"
-             xmlns:vm="using:caffeApp.ViewModels"
-             x:TypeArguments="vm:OrdersViewModel"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             x:DataType="vm:OrdersViewModel"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="caffeApp.Views.OrdersView">
+    xmlns="https://github.com/avaloniaui"
+    xmlns:rxui="http://reactiveui.net"
+    xmlns:vm="using:caffeApp.ViewModels"
+    x:TypeArguments="vm:OrdersViewModel"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:DataType="vm:OrdersViewModel"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="800"
+    x:Class="caffeApp.Views.OrdersView">
 
+	<UserControl.Background>
+		<SolidColorBrush Color="Yellow"></SolidColorBrush>
+	</UserControl.Background>
 
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition></ColumnDefinition>
-			<ColumnDefinition></ColumnDefinition>
-		</Grid.ColumnDefinitions>
+	<UserControl.Styles>
+		<Styles>
+			<StyleInclude Source="/Designer/Styles/AppStyles.axaml"></StyleInclude>
+		</Styles>
+	</UserControl.Styles>
+	
+	<Grid Margin="30">
 
-		<StackPanel 
-			IsVisible="{Binding !IsPaymentAction}"
-				VerticalAlignment="Center"
-				HorizontalAlignment="Center">
-					<TextBlock
-			IsVisible="{Binding !IsSelectedOrder}"
-			VerticalAlignment="Center"
-			HorizontalAlignment="Center">
-			Выберите заказ
-		</TextBlock>
-		</StackPanel>
-		
-		<ScrollViewer IsVisible="{Binding IsSelectedOrder}">
-			<StackPanel Margin="30">
-				<TextBlock>Идентификатор</TextBlock>
-				<TextBox
-					IsReadOnly="True"
-					Margin="0 10"
-					Text="{Binding SelectedOrderView.OrderId}">
-				</TextBox>
-				<TextBlock>Количество гостей</TextBlock>
-				<TextBox
-					IsReadOnly="True"
-					Margin="0 10"
-					Text="{Binding SelectedOrderView.Quantityclients}">
-				</TextBox>
-				<TextBlock>Сумма оплаты заказа</TextBlock>
-				<TextBox
-					IsReadOnly="True"
-					Margin="0 10"
-					Text="{Binding SelectedOrderView.Sum}">
-				</TextBox>
-				<TextBlock>Статус заказа</TextBlock>
-				<TextBox
-					IsReadOnly="True"
-					Margin="0 10"
-					Text="{Binding SelectedOrderView.Status}">
-				</TextBox>
-				<TextBlock>Сумма оплаты</TextBlock>
-				<TextBox
-					IsReadOnly="True"
-					Margin="0 10"
-					Text="{Binding SelectedOrderView.Sum}">
-				</TextBox>
-				<TextBlock>Блюда</TextBlock>
-				<ListBox 
-					Margin="0 10"
-					ItemsSource="{Binding SplitFoods}">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<StackPanel Orientation="Horizontal">
-								<TextBlock Text="{Binding Name}"></TextBlock>
-								<TextBlock Text=" x"></TextBlock>
-								<TextBlock Text="{Binding Count}"></TextBlock>
-							</StackPanel>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
+		<Button
+			VerticalAlignment="Bottom"
+			Command="{Binding UnselectOrder}"
+			Classes="N"
+			IsVisible="{Binding IsSelectedOrder}">
+			Назад
+		</Button>
+
+		<Button
+			IsVisible="{Binding IsPaymentAction}"
+			VerticalAlignment="Bottom"
+			Command="{Binding HidePayment}"
+			Classes="N">
+			Назад
+		</Button>
+
+		<Button
+			IsVisible="{Binding IsCheckAction}"
+			VerticalAlignment="Bottom"
+			Command="{Binding HideCheck}"
+			Classes="N">
+			Назад
+		</Button>
 				
-				<StackPanel
-					IsVisible="{Binding IsSheff}"
-					Orientation="Horizontal">
-					<TextBlock>Изменить статус заказа:</TextBlock>
+		
+		<StackPanel IsVisible="{Binding !IsPaymentAction} ">
+			
+			<StackPanel IsVisible="{Binding !IsCheckAction}">
+						<StackPanel
+			IsVisible="{Binding !IsSelectedOrder}">
+
+				<TextBlock Classes="Sub">Заказы</TextBlock>
+
+				<StackPanel Margin="0 20">
+					<TextBlock Margin="0 5">Смены</TextBlock>
 					<ComboBox
-						SelectedItem="{Binding SelectedStatusOrder}"
-						ItemsSource="{Binding StatusesOrder}">
+						Classes="N"
+						SelectedItem="{Binding SelectedWorkShift}"
+						ItemsSource="{Binding Workshifts}">
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
-								<TextBlock Text="{Binding Name}"></TextBlock>
+								<StackPanel Orientation="Horizontal">
+									<TextBlock Text="{Binding Date}"></TextBlock>
+									<TextBlock> </TextBlock>
+									<TextBlock Text="{Binding Timestart}"></TextBlock>
+									<TextBlock>-</TextBlock>
+									<TextBlock Text="{Binding Timeend}"></TextBlock>
+								</StackPanel>
 							</DataTemplate>
 						</ComboBox.ItemTemplate>
 					</ComboBox>
 				</StackPanel>
-				
-				<StackPanel
-					IsVisible="{Binding !IsOrderPayed}"
-					>
-					<Button
-						IsVisible="{Binding IsWaiter}"
-						Command="{Binding PaymentCommand}"
-						Margin="0 10">
-						Оплата заказа
-					</Button>
-				</StackPanel>
-				
-				<TextBlock
-					HorizontalAlignment="Center"
-					Margin="0 10"
-					IsVisible="{Binding IsOrderPayed}"	
-					FontWeight="Bold"
-					FontSize="20">
-					Заказ оплачен
-				</TextBlock>
-				
-				<StackPanel
-					IsVisible="{Binding !IsOrderPayed}">
-					 <Button 
-						IsVisible="{Binding IsAdmin}"
-						Command="{Binding OpenAddOrderForUpdateView}"
-						Height="50"
-						Width="150"
-						Margin="20"
-						VerticalAlignment="Bottom"
+
+				<DataGrid
+					Classes="N"
+					CanUserResizeColumns="True"
+					IsReadOnly="True"
+					Height="450"
+					SelectedItem="{Binding SelectedOrderView}"
+					ItemsSource="{Binding Orders}">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Идентификатор" Binding="{Binding OrderId}"></DataGridTextColumn>
+						<DataGridTextColumn Header="Дата" Binding="{Binding Dateorder}"></DataGridTextColumn>
+						<DataGridTextColumn Header="Количество гостей" Binding="{Binding Quantityclients}"></DataGridTextColumn>
+						<DataGridTextColumn Header="Место" Binding="{Binding Numberplace}"></DataGridTextColumn>
+						<DataGridTextColumn Header="Статус заказа" Binding="{Binding StatusOrder}"></DataGridTextColumn>
+						<DataGridTextColumn Header="Статус оплаты" Binding="{Binding StatusPayment}"></DataGridTextColumn>
+						<DataGridTextColumn Header="Сумма заказа" Binding="{Binding Sum}"></DataGridTextColumn>
+					</DataGrid.Columns>
+				</DataGrid>
+
+				<Button
+					Classes="N"
+					IsVisible="{Binding IsWaiter}"
+					Command="{Binding OpenAddOrderView}"
+					Height="50"
+					Width="150"
+					Margin="20"
+					VerticalAlignment="Bottom"
+					HorizontalAlignment="Center">
+					<TextBlock
+						VerticalAlignment="Center"
 						HorizontalAlignment="Center">
+						Добавить
+					</TextBlock>
+				</Button>
+			</StackPanel>
+
+			<StackPanel
+				Orientation="Horizontal"
+				IsVisible="{Binding IsSelectedOrder}">
+
+				<StackPanel>
+					<StackPanel Margin="30">
+						<TextBlock>Идентификатор</TextBlock>
+						<TextBox
+							Classes="N"
+							IsReadOnly="True"
+							Margin="0 10"
+							Text="{Binding SelectedOrderView.OrderId}">
+						</TextBox>
+						<TextBlock>Количество гостей</TextBlock>
+						<TextBox
+							Classes="N"
+							IsReadOnly="True"
+							Margin="0 10"
+							Text="{Binding SelectedOrderView.Quantityclients}">
+						</TextBox>
+						<TextBlock>Статус заказа</TextBlock>
+						<TextBox
+							Classes="N"
+							IsReadOnly="True"
+							Margin="0 10"
+							Text="{Binding SelectedOrderView.StatusOrder}">
+						</TextBox>
+
+						<TextBlock>Сумма оплаты заказа</TextBlock>
+						<TextBox
+							Classes="N"
+							IsReadOnly="True"
+							Margin="0 10"
+							Text="{Binding SelectedOrderView.Sum}">
+						</TextBox>
+
+
+
+						<StackPanel IsVisible="{Binding IsSheff}" Orientation="Horizontal">
+							
+							<TextBlock VerticalAlignment="Center">Изменить статус заказа:</TextBlock>
+							
+							<ComboBox
+								VerticalAlignment="Center"
+								Classes="N"
+								SelectedItem="{Binding SelectedStatusOrder}"
+								ItemsSource="{Binding StatusesOrder}">
+								<ComboBox.ItemTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding Name}"></TextBlock>
+									</DataTemplate>
+								</ComboBox.ItemTemplate>
+							</ComboBox>
+
+							<Button
+								VerticalAlignment="Center"
+								Command="{Binding }"
+								Classes="N">
+								Применить
+							</Button>
+						</StackPanel>
+
+						<StackPanel IsVisible="{Binding !IsOrderPayed}">
+							<Button
+								Classes="N"
+								IsVisible="{Binding IsWaiter}"
+								Command="{Binding PaymentCommand}"
+								Margin="0 10">
+								Оплата заказа
+							</Button>
+						</StackPanel>
+
 						<TextBlock
-							VerticalAlignment="Center"
-							HorizontalAlignment="Center">
-							Редактировать
+							Classes="Sub"
+							HorizontalAlignment="Center"
+							Margin="0 10"
+							IsVisible="{Binding IsOrderPayed}"
+							FontWeight="Bold"
+							FontSize="20">
+							Заказ оплачен
 						</TextBlock>
-					</Button>
+					</StackPanel>
 				</StackPanel>
 
+				<StackPanel Margin="20 0 0 0">
+					<TextBlock Classes="Sub">Покупки</TextBlock>
+					<ListBox
+						MinHeight="100"
+						MinWidth="300"
+						Classes="N"
+						Margin="0 10"
+						ItemsSource="{Binding SplitFoods}">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<StackPanel Orientation="Horizontal">
+									<TextBlock Margin="2 0" Text="{Binding Name}"></TextBlock>
+									<TextBlock Margin="2 0" Text="{Binding Count}"></TextBlock>
+									<TextBlock Margin="2 0" Text="шт."></TextBlock>
+									<TextBlock Margin="2 0" Text="{Binding Sum}"></TextBlock>
+									<TextBlock Margin="2 0" Text="руб."></TextBlock>
+								</StackPanel>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</StackPanel>
+			</StackPanel>
+		</StackPanel>		
+	</StackPanel>
+		
+		<StackPanel Margin="50" 
+					IsVisible="{Binding IsPaymentAction}">
+			<Border
+				Width="500"
+				Background="White">
+				<StackPanel Margin="20">
+					<TextBlock
+						Classes="Sub"
+						Margin="0 10"
+						HorizontalAlignment="Center">
+						Оплата
+					</TextBlock>
 
-			</StackPanel>
-		</ScrollViewer>
-		
-		<StackPanel
-			Margin="50"
-			IsVisible="{Binding IsPaymentAction}">
-			<TextBlock
-				Margin="0 10"
-				HorizontalAlignment="Center">
-				Оплата
-			</TextBlock>	
-			
-			<RadioButton
-				GroupName="PaymentType"
-				IsChecked="{Binding IsCreditCard}">
-			    <TextBlock>Оплата картой</TextBlock>
-			</RadioButton>
-			
-			<RadioButton
-				GroupName="PaymentType"
-				IsChecked="{Binding IsCash}">
-			    <TextBlock>Оплата наличными</TextBlock>
-			</RadioButton>
-			
-			<StackPanel Margin="0 10" Orientation="Horizontal">
-				<TextBlock>Сумма оплаты: </TextBlock>
-				<TextBlock Text="{Binding SelectedOrderView.Sum}"></TextBlock>
-				<TextBlock Text=" руб."></TextBlock>
-			</StackPanel>
-			
-			<Button
-				Command="{Binding SubmitPayment}"
-				Margin="0 10"
-				HorizontalAlignment="Center">
-				Подтвердить
-			</Button>
-			
-		
+					<RadioButton
+						HorizontalAlignment="Left"
+						GroupName="PaymentType"
+						IsChecked="{Binding IsCreditCard}">
+						<ContentControl>
+							<TextBlock>Оплата картой</TextBlock>
+						</ContentControl>
+					</RadioButton>
+
+					<RadioButton
+						HorizontalAlignment="Left"
+						GroupName="PaymentType"
+						IsChecked="{Binding IsCash}">
+						<ContentControl>
+							<TextBlock>Оплата наличными</TextBlock>
+						</ContentControl>
+					</RadioButton>
+
+					<StackPanel Margin="0 30" HorizontalAlignment="Center" Orientation="Horizontal">
+						<TextBlock Margin="0" VerticalAlignment="Center" Classes="Sub" >Сумма оплаты: </TextBlock>
+						<TextBlock VerticalAlignment="Center" Text="{Binding SelectedOrderView.Sum}"></TextBlock>
+						<TextBlock VerticalAlignment="Center" Text=" руб."></TextBlock>
+					</StackPanel>
+					<Button
+						Classes="N"
+						Command="{Binding SubmitPayment}"
+						Margin="0 10"
+						HorizontalAlignment="Center">
+						Подтвердить
+					</Button>
+				</StackPanel>
+			</Border>
 		</StackPanel>
-	
-		<Button
-			IsVisible="{Binding IsWaiter}"
-			Command="{Binding OpenAddOrderView}"
-			Height="50"
-			Width="150"
-			Margin="20"
-			VerticalAlignment="Bottom"
-			HorizontalAlignment="Center">	
-			<TextBlock 
-				VerticalAlignment="Center"
-				HorizontalAlignment="Center">
-				Добавить
-			</TextBlock>
-		</Button>
 		
-		<StackPanel Grid.Column="1"
-			Margin="15"
-		
-			HorizontalAlignment="Center">
-			<TextBlock>Заказы</TextBlock>
+				<Border
+					Margin="50"
+					Background="White"
+					Width="500"
+					IsVisible="{Binding IsCheckAction}">
 
-			<StackPanel Margin="0 20">
-				<TextBlock Margin="0 5">Дата</TextBlock>
-				<ComboBox 
-					SelectedItem="{Binding SelectedWorkShift}"
-					ItemsSource="{Binding Workshifts}">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
+					<ScrollViewer>
+						<StackPanel Margin="20">
+							<TextBlock
+								HorizontalAlignment="Center"
+								Margin="0 15"
+								FontWeight="Bold"
+								FontSize="20">
+								Чек
+							</TextBlock>
+
+							<TextBlock
+								FontWeight="Bold"
+								FontSize="18"
+								Margin="0 10">
+								Дата оплаты
+							</TextBlock>
+
+							<TextBlock Text="{Binding CreatedPayment.Datepayment}" />
+
+							<TextBlock
+								FontWeight="Bold"
+								FontSize="18"
+								Margin="0 10">
+								Покупки
+							</TextBlock>
+
+							<ListBox
+								MinHeight="100"
+								MinWidth="300"
+								Classes="N"
+								Margin="0 10"
+								ItemsSource="{Binding SplitFoods}">
+								<ListBox.ItemTemplate>
+									<DataTemplate>
+										<StackPanel Orientation="Horizontal">
+											<TextBlock Margin="2 0" Text="{Binding Name}"></TextBlock>
+											<TextBlock Margin="2 0" Text="{Binding Count}"></TextBlock>
+											<TextBlock Margin="2 0" Text="шт."></TextBlock>
+											<TextBlock Margin="2 0" Text="{Binding Sum}"></TextBlock>
+											<TextBlock Margin="2 0" Text="руб."></TextBlock>
+										</StackPanel>
+									</DataTemplate>
+								</ListBox.ItemTemplate>
+							</ListBox>
+
+							<TextBlock
+								Margin="0 10"
+								FontWeight="Bold"
+								FontSize="18">
+								Сумма оплаты
+							</TextBlock>
+
 							<StackPanel Orientation="Horizontal">
-								<TextBlock Text="{Binding Date}"></TextBlock>
-								<TextBlock> </TextBlock>
-								<TextBlock Text="{Binding Timestart}"></TextBlock>
-								<TextBlock>-</TextBlock>
-								<TextBlock Text="{Binding Timeend}"></TextBlock>
+								<TextBlock
+							
+									VerticalAlignment="Center"
+									Text="{Binding CreatedPayment.Sum}" />
+								<TextBlock
+									Margin="5 0"
+									VerticalAlignment="Center"
+									Text="руб." />
 							</StackPanel>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
-			</StackPanel>
 
 
+							<TextBlock
+								FontWeight="Bold"
+								FontSize="18"
+								Margin="0 10">
+								Официант
+							</TextBlock>
 
-			<DataGrid 
-				CanUserResizeColumns="True"
-				IsReadOnly="True"
-				Height="450"
-				SelectedItem="{Binding SelectedOrderView}"
-				ItemsSource="{Binding Orders}">
-				<DataGrid.Columns>
-					<DataGridTextColumn Header="Идентификатор" Binding="{Binding OrderId}"></DataGridTextColumn>
-					<DataGridTextColumn Header="Дата" Binding="{Binding Dateorder}"></DataGridTextColumn>
-					<DataGridTextColumn Header="Количество гостей" Binding="{Binding Quantityclients}"></DataGridTextColumn>
-					<DataGridTextColumn Header="Место" Binding="{Binding Numberplace}"></DataGridTextColumn>
-					<DataGridTextColumn Header="Статус заказа" Binding="{Binding Status}"></DataGridTextColumn>
-					<DataGridTextColumn Header="Сумма заказа" Binding="{Binding Sum}"></DataGridTextColumn>
-				</DataGrid.Columns>
-			</DataGrid>
+							<StackPanel Orientation="Horizontal">
+								<TextBlock Text="{Binding WaiterUser.FirstName}" />
+								<TextBlock Margin="10 0" Text="{Binding WaiterUser.SecondName}" />
+								<TextBlock Margin="10 0" Text="{Binding WaiterUser.Surname}" />
+							</StackPanel>
 
-		</StackPanel>
+							<TextBlock
+								HorizontalAlignment="Center"
+								FontWeight="Bold"
+								FontSize="18"
+								Margin="0 10">
+								Оплата успешно выполнена
+							</TextBlock>
+
+						</StackPanel>
+					</ScrollViewer>
+			</Border>
 	</Grid>
-	
-
-
 </rxui:ReactiveUserControl>

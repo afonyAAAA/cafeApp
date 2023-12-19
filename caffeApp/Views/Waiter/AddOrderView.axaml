@@ -10,152 +10,197 @@
              x:DataType="vm:AddOrderViewModel"
              x:Class="caffeApp.Views.Waiter.AddOrderView">
 
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition></ColumnDefinition>
-			<ColumnDefinition></ColumnDefinition>
-		</Grid.ColumnDefinitions>
 
-		<StackPanel
-			Margin="30">
-			<TextBlock 
-				IsVisible="{Binding !IsEditOrder}"
-				HorizontalAlignment="Center"
-				Margin="0 20">
-				Добавление заказа
-			</TextBlock>	
-			
-			<TextBlock 
-				IsVisible="{Binding IsEditOrder}"
-				HorizontalAlignment="Center"
-				Margin="0 20">
-				Редактирование заказа
-			</TextBlock>
+	<UserControl.Styles>
+		<StyleInclude Source="avares://caffeApp/Designer/Styles/AppStyles.axaml"></StyleInclude>
+	</UserControl.Styles>
 
-			<StackPanel IsVisible="{Binding IsEditOrder}">
-				<TextBlock>Идентификатор</TextBlock>
-				<TextBox
-					IsEnabled="True"
-					HorizontalAlignment="Left"
-					Width="100"
-					Margin="0 5"
-					Text="{Binding OrderId}">
-				</TextBox>
+	<UserControl.Background>
+		<SolidColorBrush Color="yellow"></SolidColorBrush>
+	</UserControl.Background>
+
+
+	<Grid Margin="30">
+		<StackPanel Orientation="Horizontal">
+			<StackPanel>
+				<StackPanel
+					Margin="30">
+					<TextBlock
+						Classes="Sub"
+						IsVisible="{Binding !IsEditOrder}"
+						HorizontalAlignment="Center"
+						Margin="0 20">
+						Добавление заказа
+					</TextBlock>
+
+					<TextBlock
+						Classes="Sub"
+						IsVisible="{Binding IsEditOrder}"
+						HorizontalAlignment="Center"
+						Margin="0 20">
+						Редактирование заказа
+					</TextBlock>
+
+					<StackPanel IsVisible="{Binding IsEditOrder}">
+						<TextBlock>Идентификатор</TextBlock>
+						<TextBox
+							Classes="N"
+							IsEnabled="True"
+							HorizontalAlignment="Left"
+							Width="100"
+							Margin="0 5"
+							Text="{Binding OrderId}">
+						</TextBox>
+					</StackPanel>
+
+					<TextBlock>Количество гостей</TextBlock>
+
+					<ComboBox
+					  Classes="N"
+					  ItemsSource="{Binding NumberGuests}"
+					  SelectedIndex="0"
+					  SelectedItem="{Binding SelectedNumberGuests}"
+					  Width="200"
+					  Margin="0 5"
+					  MaxDropDownHeight="300">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding }"></TextBlock>
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
+
+					<TextBlock>Место</TextBlock>
+
+					<ComboBox 
+						Classes="N"
+					  ItemsSource="{Binding Places}"
+					  SelectedIndex="0"
+					  SelectedItem="{Binding SelectedPlace}"
+					  Width="200"
+					  Margin="0 5"
+					  MaxDropDownHeight="300">
+						<ComboBox.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding Number}"></TextBlock>
+							</DataTemplate>
+						</ComboBox.ItemTemplate>
+					</ComboBox>
+
+					<StackPanel Margin="0 30" Orientation="Horizontal">
+
+						<TextBlock
+							VerticalAlignment="Center"
+							Margin="5 0">
+							Итого:
+						</TextBlock>
+
+						<TextBlock
+							VerticalAlignment="Center"
+							FontSize="20"
+							FontWeight="Bold"
+							Text="{Binding SumOrder}"></TextBlock>
+
+					</StackPanel>
+
+
+					<Button
+						Classes="N"
+						IsVisible="{Binding !IsEditOrder}"
+						Command="{Binding Submit}"
+						HorizontalAlignment="Center"
+						Margin="0 10">
+						Подтвердить
+					</Button>
+
+					<Button
+						Classes="N"
+						IsVisible="{Binding IsEditOrder}"
+						Command="{Binding SubmitUpdate}"
+						HorizontalAlignment="Center"
+						Margin="0 10">
+						Подтвердить
+					</Button>
+				</StackPanel>
 			</StackPanel>
-		
-			
-			<TextBlock>Количество гостей</TextBlock>
-			
-			<ComboBox 
-			  ItemsSource="{Binding NumberGuests}"
-			  SelectedIndex="0"
-			  SelectedItem="{Binding SelectedNumberGuests}"
-			  Width="200"
-			  Margin="0 5"
-		      MaxDropDownHeight="300">
-				<ComboBox.ItemTemplate>
-					<DataTemplate>
-						<TextBlock Text="{Binding }"></TextBlock>
-					</DataTemplate>
-				</ComboBox.ItemTemplate>
-			</ComboBox>	
-			
-			<TextBlock>Место</TextBlock>
-			
-			<ComboBox ItemsSource="{Binding Places}"
-			  SelectedIndex="0"
-			  SelectedItem="{Binding SelectedPlace}"
-			  Width="200"
-			  Margin="0 5"
-		      MaxDropDownHeight="300">
-				<ComboBox.ItemTemplate>
-					<DataTemplate>
-						<TextBlock Text="{Binding Number}"></TextBlock>
-					</DataTemplate>
-				</ComboBox.ItemTemplate>
-			</ComboBox>
-
-			<StackPanel Margin="0 5" Orientation="Horizontal">
-				
-				<TextBlock>Итого:</TextBlock>
-				
-				<TextBlock Text="{Binding SumOrder}"></TextBlock>
-				
-			</StackPanel>
-
-
-			<Button 
-				IsVisible="{Binding !IsEditOrder}"
-				Command="{Binding Submit}"
-				HorizontalAlignment="Center"
-				Margin="0 10">
-				Подтвердить
-			</Button>	
-			
-			<Button 
-				IsVisible="{Binding IsEditOrder}"
-				Command="{Binding SubmitUpdate}"
-				HorizontalAlignment="Center"
-				Margin="0 10">
-				Подтвердить
-			</Button>
-			
+			<StackPanel>
 		</StackPanel>
 
-		<StackPanel 
-			Margin="60"
+		<StackPanel
+			Margin="50"
 			VerticalAlignment="Top"
-			HorizontalAlignment="Center"
-			Grid.Column="1">
+			HorizontalAlignment="Center">
 
-			<TextBlock
-				HorizontalAlignment="Center">
-				Выбрать блюда
-			</TextBlock>
-			<StackPanel Orientation="Horizontal">
-				<Button
-					Command="{Binding AddFood}">
-					+
-				</Button>
-				<ComboBox 
-					ItemsSource="{Binding Foods}"
-					SelectedItem="{Binding SelectedFood}"
-					Width="200"
-					Margin="0 5"
-					  
-					  MaxDropDownHeight="300">
+				<TextBlock 
+					Margin="0"
+					Classes="Sub">
+					Выбрать покупки
+				</TextBlock>
+
+
+			<ComboBox
+				Classes="N"
+				HorizontalAlignment="Stretch"
+				ItemsSource="{Binding Foods}"
+				SelectedItem="{Binding SelectedFood}"
+				Margin="0 5"
+				MaxDropDownHeight="300">
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
 							<StackPanel Orientation="Horizontal">
 								<TextBlock Text="{Binding Name}"></TextBlock>
-								<TextBlock Text="   $"></TextBlock>
-								<TextBlock Text="{Binding Price}"></TextBlock>
 							</StackPanel>
 						</DataTemplate>
 					</ComboBox.ItemTemplate>
 				</ComboBox>
-				
+
+			<StackPanel Orientation="Horizontal">
 				<Button
+					Width="90"
+					Height="40"
+					Classes="N"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Center"
+				Command="{Binding AddFood}">
+					Добавить
+				</Button>
+				<Button
+					Width="90"
+					Height="40"
+					Classes="N"
+					Margin="0 5"
+					HorizontalAlignment="Right"
+					VerticalAlignment="Center"
 					Command="{Binding DeleteFood}">
-					-
+					Удалить
 				</Button>
 			</StackPanel>
 
+			<ScrollViewer>
+				<ListBox
+					SelectedItem="{Binding SelectedFoodForDelete}"
+					MaxHeight="300"
+					MinHeight="100"
+					MinWidth="300"
+					Classes="N"
+					Margin="0 10"
+					ItemsSource="{Binding SplitFoods}">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal">
+								<TextBlock Margin="2 0" Text="{Binding Name}"></TextBlock>
+								<TextBlock Margin="2 0" Text="{Binding Count}"></TextBlock>
+								<TextBlock Margin="2 0" Text="шт."></TextBlock>
+								<TextBlock Margin="2 0" Text="{Binding Sum}"></TextBlock>
+								<TextBlock Margin="2 0" Text="руб."></TextBlock>
+							</StackPanel>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</ScrollViewer>
 
-			<ListBox
-				SelectedItem="{Binding SelectedFoodForDelete}"
-				ItemsSource="{Binding SelectedFoods}">
-				<ListBox.ItemTemplate>
-					<DataTemplate>
-						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="{Binding Name}"></TextBlock>
-							<TextBlock Text="   $"></TextBlock>
-							<TextBlock Text="{Binding Price}"></TextBlock>
-						</StackPanel>
-						
-					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
+
+		</StackPanel>
 		</StackPanel>
 	</Grid>
 	

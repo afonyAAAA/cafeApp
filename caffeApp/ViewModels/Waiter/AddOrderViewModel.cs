@@ -19,6 +19,7 @@ using Npgsql.Replication;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Diagnostics;
+using caffeApp.models;
 
 namespace caffeApp.ViewModels.Waiter
 {
@@ -30,7 +31,9 @@ namespace caffeApp.ViewModels.Waiter
 
         public override ViewModelActivator Activator { get; set; }
 
-        private List<Food> _selectedFoods;
+        private ObservableCollection<Food> _selectedFoods;
+
+        private ObservableCollection<SplitFood> _splitFoods;
 
         private ObservableCollection<Place> _places;
 
@@ -38,7 +41,7 @@ namespace caffeApp.ViewModels.Waiter
 
         private Food _selectedFood;
 
-        private Food _selectedFoodForDelete;
+        private SplitFood _selectedFoodForDelete;
 
         private Place _selectedPlace;
 
@@ -52,7 +55,7 @@ namespace caffeApp.ViewModels.Waiter
 
         private List<int> numberGuests = Enumerable.Range(1, 100).ToList();
 
-        public List<Food> SelectedFoods { 
+        public ObservableCollection<Food> SelectedFoods { 
             get => _selectedFoods; 
             set => this.RaiseAndSetIfChanged(ref _selectedFoods, value); 
         }
@@ -64,7 +67,6 @@ namespace caffeApp.ViewModels.Waiter
             get => _foods; 
             set => this.RaiseAndSetIfChanged(ref _foods, value);
         }
-
         public Food SelectedFood {
             get => _selectedFood;
             set {
@@ -102,22 +104,27 @@ namespace caffeApp.ViewModels.Waiter
 
         public ReactiveCommand<Unit, Unit> AddFood { get; }
 
-        public Food SelectedFoodForDelete {
+        public SplitFood SelectedFoodForDelete {
             get => _selectedFoodForDelete; 
             set => this.RaiseAndSetIfChanged(ref _selectedFoodForDelete, value);
+        }
+
+        public ObservableCollection<SplitFood> SplitFoods { 
+            get => _splitFoods;
+            set => this.RaiseAndSetIfChanged(ref _splitFoods, value);
         }
 
         public AddOrderViewModel(IScreen screen, Ordersview selectedOrderView = null) {
 
             HostScreen = screen;
 
+            SplitFoods = new();
+
             Activator = new();
 
             Places = DatabaseHelper.refreshEntity<Place>();
 
             Foods = DatabaseHelper.refreshEntity<Food>();
-
-            SelectedFoodForDelete = new();
 
             if (selectedOrderView != null)
             {
@@ -127,11 +134,13 @@ namespace caffeApp.ViewModels.Waiter
                 SelectedNumberGuests = (int)selectedOrderView.Quantityclients;
                 SumOrder = (decimal)selectedOrderView.Sum;
 
-                SelectedFoods = DatabaseHelper
+                var selectedFoods = DatabaseHelper
                     .refreshEntity<Foodorder>(x => x.Food)
                     .Where(x => x.OrderId == selectedOrderView.OrderId)
-                    .Select(x => new Food {FoodId = x.FoodId, Name = x.Food.Name, Price = x.Food.Price})
+                    .Select(x => new Food { FoodId = x.FoodId, Name = x.Food.Name, Price = x.Food.Price })
                     .ToList();
+
+                SelectedFoods = new(selectedFoods);
             }
             else
             {
@@ -140,6 +149,26 @@ namespace caffeApp.ViewModels.Waiter
             }
 
             this.WhenAnyValue(x => x.SelectedFoods).Subscribe(x => {
+
+                var counter = 0;
+
+                SplitFoods = new();
+
+                foreach (var food in SelectedFoods)
+                {
+                    var sameFood = SplitFoods.ToList().FindIndex(x => x.Name == food.Name);
+
+                    if (sameFood == -1)
+                    {
+                        SplitFoods.Add(new SplitFood(food.Name, 1, food.Price));
+                    }
+                    else
+                    {
+                        var currentFood = SplitFoods[sameFood];
+                        SplitFoods[sameFood] = new(currentFood.Name, ++currentFood.Count, currentFood.Sum + food.Price);
+                    }
+                    ++counter;
+                }
 
                 decimal sum = 0;
 
@@ -151,15 +180,16 @@ namespace caffeApp.ViewModels.Waiter
                 SumOrder = sum;
             });
 
-            var isCanDeleteFood = this.WhenAnyValue(x => x.SelectedFoodForDelete).WhereNotNull().Select(x => x.FoodId != 0);
+            var isCanDeleteFood = this.WhenAnyValue(x => x.SelectedFoodForDelete).Select(x => x != null);
 
             var isCanAddFood = this.WhenAnyValue(x => x.SelectedFood).WhereNotNull().Select(x => x.FoodId != 0);
 
             DeleteFood = ReactiveCommand.Create(() =>
             {
+                var deletedFood = SelectedFoods.FirstOrDefault(x => x.Name == SelectedFoodForDelete.Name);
                 var newListSelectedFoods = SelectedFoods.ToList();
-                newListSelectedFoods.Remove(SelectedFoodForDelete);
-                SelectedFoods = newListSelectedFoods;
+                newListSelectedFoods.Remove(deletedFood);
+                SelectedFoods = new(newListSelectedFoods);
             }, isCanDeleteFood);
 
             AddFood = ReactiveCommand.Create(() => {
@@ -233,9 +263,11 @@ namespace caffeApp.ViewModels.Waiter
                     return await Task.FromResult(false);
                 }
 
-                var userInWorkShift = DatabaseHelper.refreshEntity<Workshiftview>().First(x =>
+                var userId = UserHelper.getAuthorizedUserInfo().UserId;
+
+                var userInWorkShift = DatabaseHelper.refreshEntity<Workshiftview>().FirstOrDefault(x =>
                     x.WorkshiftId == workshift.WorkshiftId
-                    && x.UserId == UserHelper.getAuthorizedUserInfo().UserId
+                    && x.UserId == userId
                 );
 
                 if (userInWorkShift == null)

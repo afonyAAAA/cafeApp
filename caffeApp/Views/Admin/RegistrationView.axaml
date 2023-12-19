@@ -54,7 +54,7 @@
 					Classes="N"
 					Margin="0 5">
 				</TextBox>
-				<TextBlock>Отчетсво</TextBlock>
+				<TextBlock>Отчеcтво</TextBlock>
 				<TextBox
 					Text="{Binding Surname}"
 					Classes="N"
@@ -78,8 +78,8 @@
 				</ComboBox>
 
 				<TextBlock
-					Margin="0 5"
-					HorizontalAlignment="Center">
+					Classes="N"
+					Margin="0 5">
 					Фото пользователя
 				</TextBlock>
 
@@ -107,8 +107,7 @@
 				</Button>
 
 				<TextBlock
-					Margin="0 5"
-					HorizontalAlignment="Center">
+					Margin="0 5">
 					Скан договора
 				</TextBlock>
 
@@ -119,12 +118,12 @@
 						Background="Gainsboro"
 						CornerRadius="3"
 						BorderThickness="3">
+			
 					<Image
 						Source="{Binding AggrementImageBitmap}"
 						Grid.Column="1"
 						MaxWidth="300"
 						MaxHeight="300">
-
 					</Image>
 				</Border>
 
