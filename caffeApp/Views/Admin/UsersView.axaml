@@ -114,9 +114,9 @@
 					BorderThickness="1" BorderBrush="Gray">
 				
 				<DataGrid.Columns>
-					<DataGridTextColumn Header="Фамилия"  Binding="{Binding FirstName}"/>
-					<DataGridTextColumn Header="Имя"  Binding="{Binding SecondName}"/>
-					<DataGridTextColumn Header="Отчетсво" Binding="{Binding Surname}" />
+					<DataGridTextColumn Width="150" Header="Фамилия"  Binding="{Binding FirstName}"/>
+					<DataGridTextColumn Width="150" Header="Имя"  Binding="{Binding SecondName}"/>
+					<DataGridTextColumn Width="150" Header="Отчетсво" Binding="{Binding Surname}" />
 					<DataGridTextColumn Header="Роль" Binding="{Binding Role.Name}" />
 					<DataGridTemplateColumn Header="Статус">
 						<DataGridTemplateColumn.CellTemplate>

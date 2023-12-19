@@ -117,7 +117,7 @@ public class MainViewModel : ReactiveObject, IScreen, IActivatableViewModel, IAu
             {
                 var user = UserHelper.getAuthorizedUserInfo();
 
-                if (user.UserId != 0)
+                if (user != null && user.UserId != 0)
                 {
                     IsNotAuthorizedUser = false;
                     switch (user.RoleId)
