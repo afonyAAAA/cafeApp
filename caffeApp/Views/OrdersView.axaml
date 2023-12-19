@@ -148,12 +148,12 @@
 
 
 
-						<StackPanel IsVisible="{Binding IsSheff}" Orientation="Horizontal">
+						<StackPanel IsVisible="{Binding IsSheff}">
 							
-							<TextBlock VerticalAlignment="Center">Изменить статус заказа:</TextBlock>
+							<TextBlock Margin="0 5">Изменить статус заказа:</TextBlock>
 							
 							<ComboBox
-								VerticalAlignment="Center"
+								Margin="0 5"
 								Classes="N"
 								SelectedItem="{Binding SelectedStatusOrder}"
 								ItemsSource="{Binding StatusesOrder}">
@@ -166,7 +166,7 @@
 
 							<Button
 								VerticalAlignment="Center"
-								Command="{Binding }"
+								Command="{Binding SubmitUpdateStatusOrder}"
 								Classes="N">
 								Применить
 							</Button>
