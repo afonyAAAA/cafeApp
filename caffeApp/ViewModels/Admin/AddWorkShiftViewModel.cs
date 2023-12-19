@@ -46,7 +46,7 @@ namespace caffeApp.ViewModels.Admin
         public ObservableCollection<User> Users {
             get
             { 
-                var usersIsNotFired = _users.Where(x =>!x.IsFired).ToList();
+                var usersIsNotFired = _users.Where(x => !x.IsFired && x.RoleId != 3).ToList();
 
                 return new(usersIsNotFired);
             }

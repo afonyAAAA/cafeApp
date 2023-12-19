@@ -287,15 +287,68 @@ namespace caffeApp.ViewModels
                     var worksheet = package.Workbook.Worksheets.Add("Отчёт");
 
                     // Добавление содержимого в документ
-                    worksheet.Cells.LoadFromCollection(Orders, true);
+                    // Заголовки столбцов
+                    worksheet.Cells["A1"].Value = "Идентификатор заказа";
+                    worksheet.Cells["B1"].Value = "Количество клиентов";
+                    worksheet.Cells["C1"].Value = "Дата заказа";
+                    worksheet.Cells["D1"].Value = "Статус заказа";
+                    worksheet.Cells["E1"].Value = "Статус оплаты";
+                    worksheet.Cells["F1"].Value = "Cумма заказа";
+                    worksheet.Cells["G1"].Value = "Метод оплаты";
+                    worksheet.Cells["H1"].Value = "Идентификатор официанта";
+                    worksheet.Cells["I1"].Value = "ФИО официанта";
+
+
+                    // Заполнение данными
+                    int row = 2;
+                    foreach (var order in Orders)
+                    {
+                        var typeMoney = "";
+
+                        if(order.Payment.Isnoncash == null)
+                        {
+                            typeMoney = "-";
+                        }
+                        else if ((bool)order.Payment.Isnoncash)
+                        {
+                            typeMoney = "Карта";
+                        }
+                        else
+                        {
+                            typeMoney = "Наличные";
+                        }
+
+                        var statusPayment = DatabaseHelper.refreshEntity<Statuspayment>().First(x => x.StatuspaymentId == order.Payment.StatuspaymentId);
+
+                        var waiter = DatabaseHelper.refreshEntity<User>().First(x => x.UserId == order.UserId);
+
+                        worksheet.Cells[row, 1].Value = order.OrderId;
+                        worksheet.Cells[row, 2].Value = order.Quantityclients;
+                        worksheet.Cells[row, 3].Value = order.Dateorder.ToString("dd-MM-yyyy");
+                        worksheet.Cells[row, 4].Value = order.Statusorder.Name;
+                        worksheet.Cells[row, 5].Value = statusPayment.Name;
+                        worksheet.Cells[row, 6].Value = order.Payment.Sum;
+                        worksheet.Cells[row, 7].Value = typeMoney;
+                        worksheet.Cells[row, 8].Value = order.UserId;
+                        worksheet.Cells[row, 8].Value = waiter.UserId;
+                        worksheet.Cells[row, 9].Value = waiter.getFullName();
+
+                        row++;
+                    }
 
                     int lastUsedRow = worksheet.Dimension?.End.Row + 1 ?? 1;
 
-                    worksheet.Cells[lastUsedRow, 1].Value = CountOrders;
-                    worksheet.Cells[lastUsedRow, 2].Value = CountIsCash;
-                    worksheet.Cells[lastUsedRow, 3].Value = CountIsNotPayedOrders;
-                    worksheet.Cells[lastUsedRow, 4].Value = CountIsCreditCard;
-                    worksheet.Cells[lastUsedRow, 5].Value = SumPay;
+                    worksheet.Cells[lastUsedRow++, 1].Value = "Количество заказов";
+                    worksheet.Cells[lastUsedRow++, 1].Value = "Количество заказов оплаченных наличными";
+                    worksheet.Cells[lastUsedRow++, 1].Value = "Количество заказов оплаченных картой";
+                    worksheet.Cells[lastUsedRow++, 1].Value = "Количество не оплаченных заказов";
+                    worksheet.Cells[lastUsedRow++, 1].Value = "Общая сумма средств за заказы (выручка)";
+
+                    worksheet.Cells[lastUsedRow++, 2].Value = CountOrders;
+                    worksheet.Cells[lastUsedRow++, 2].Value = CountIsCash;
+                    worksheet.Cells[lastUsedRow++, 2].Value = CountIsCreditCard;
+                    worksheet.Cells[lastUsedRow++, 2].Value = CountIsNotPayedOrders;
+                    worksheet.Cells[lastUsedRow++, 2].Value = SumPay.ToString() + " руб.";
 
                     package.Save();
 
@@ -382,9 +435,9 @@ namespace caffeApp.ViewModels
 
             SumPay = listOrdersOfActiveWorkShift.Sum(x => x.Payment.Sum);
             CountOrders = countOrders;
-            CountIsCash = listOrdersOfActiveWorkShift.Where(x => (bool)!x.Payment.Isnoncash).Count();
+            CountIsCash = listOrdersOfActiveWorkShift.Where(x => !x.Payment.Isnoncash ?? false).Count();
             CountIsNotPayedOrders = listOrdersOfActiveWorkShift.Where(x => x.Payment.Isnoncash == null).Count();
-            CountIsCreditCard = listOrdersOfActiveWorkShift.Where(x => (bool)x.Payment.Isnoncash).Count();
+            CountIsCreditCard = listOrdersOfActiveWorkShift.Where(x => x.Payment.Isnoncash ?? false).Count();
             Orders = new(listOrdersOfActiveWorkShift);
 
             return null;
@@ -434,9 +487,10 @@ namespace caffeApp.ViewModels
 
             SumPay = listOrdersOfActiveWorkShift.Sum(x => x.Payment.Sum);
             CountOrders = countOrders;
-            CountIsCash = listOrdersOfActiveWorkShift.Where(x => (bool)!x.Payment.Isnoncash).Count();
+            
+            CountIsCash = listOrdersOfActiveWorkShift.Where(x => !x.Payment.Isnoncash ?? false).Count();
             CountIsNotPayedOrders = listOrdersOfActiveWorkShift.Where(x => x.Payment.Isnoncash == null).Count();
-            CountIsCreditCard = listOrdersOfActiveWorkShift.Where(x => (bool)x.Payment.Isnoncash).Count();
+            CountIsCreditCard = listOrdersOfActiveWorkShift.Where(x => x.Payment.Isnoncash ?? false).Count();
             Orders = new(listOrdersOfActiveWorkShift);
 
             return null;

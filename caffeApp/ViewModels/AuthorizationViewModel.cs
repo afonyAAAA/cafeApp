@@ -103,7 +103,8 @@ namespace caffeApp.ViewModels
 
             if(user != null)
             {
-
+                user.Userworkshifts = null;
+                user.Orders = null;
                 user.Document = null;
                 user.Role = null;
                 saveUserInSystem(user);

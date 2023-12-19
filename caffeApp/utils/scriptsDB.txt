@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS Food
 (
 food_id serial NOT NULL,
 name varchar(50) NOT NULL,
-price varchar(50) NOT NULL,
+price decimal NOT NULL,
 CONSTRAINT PK_food PRIMARY KEY ( food_id )
 );
 
