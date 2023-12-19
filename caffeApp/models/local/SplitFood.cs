@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DynamicData.Aggregation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,10 +15,19 @@ namespace caffeApp.models
 
         public int Count { get; set; }
 
+        public decimal Sum { get; set; }
+
+        public SplitFood(string name, int count, decimal sum)
+        {
+            Name = name;
+            Count = count;
+            Sum = sum;
+        }
+
         public SplitFood(string name, int count)
         {
             Name = name;
             Count = count;
-        } 
+        }
     }
 }

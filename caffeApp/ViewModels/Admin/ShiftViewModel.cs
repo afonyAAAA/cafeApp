@@ -1,7 +1,9 @@
 ﻿using Avalonia.Controls.Primitives;
 using caffeApp.Desktop;
+using caffeApp.models.local;
 using caffeApp.Sources;
 using caffeApp.utils;
+using DynamicData;
 using Microsoft.EntityFrameworkCore;
 using ReactiveUI;
 using System;
@@ -28,11 +30,12 @@ namespace caffeApp.ViewModels.Admin
         private ObservableCollection<Workshiftview> _userWorkshifts;
 
         public ReactiveCommand<Unit, Unit> OpenAddWorkShift { get; }
+
         public ReactiveCommand<Unit, Unit> UnselectWorkshift { get; }
 
         private Workshiftview _selectedWorkShift;
 
-        private List<Workshiftview> _usersInWorkShift;
+        private List<WorkShiftPlace> _usersInWorkShift;
 
         private bool _isClickOnWorkShift = false;
         
@@ -41,7 +44,7 @@ namespace caffeApp.ViewModels.Admin
             set => this.RaiseAndSetIfChanged(ref _userWorkshifts, value);
         }
 
-        public List<Workshiftview> UsersInWorkShift { 
+        public List<WorkShiftPlace> UsersInWorkShift { 
             get => _usersInWorkShift; 
             set => this.RaiseAndSetIfChanged(ref _usersInWorkShift, value); 
         }
@@ -59,6 +62,8 @@ namespace caffeApp.ViewModels.Admin
             Activator = new();
 
             HostScreen = screen;
+
+            UsersInWorkShift = new();
 
             var shifts = DatabaseHelper.refreshEntity<Workshiftview>().ToList();
 
@@ -85,11 +90,29 @@ namespace caffeApp.ViewModels.Admin
                 IsClickOnWorkShift = false;
             });
 
-            this.WhenAnyValue(x => x.IsClickOnWorkShift).Subscribe(_ => {
-                if(SelectedWorkShift != null)
+            this.WhenAnyValue(x => x.SelectedWorkShift).WhereNotNull().Subscribe(_ => {
+                var workShifts = DatabaseHelper.refreshEntity<Workshiftview>()
+                .Where(x => x.WorkshiftId == SelectedWorkShift.WorkshiftId)
+                .ToList();
+
+                var userWorkShift = DatabaseHelper.refreshEntity<Userworkshift>( 
+                    x => x.Place, 
+                    x => x.User,
+                    x => x.Workshift
+                ).Where(x => x.Workshift.WorkshiftId == SelectedWorkShift.WorkshiftId);
+
+                var userWorkShiftPlace = new List<WorkShiftPlace>();
+
+                foreach(var workShift in workShifts)
                 {
-                    UsersInWorkShift = DatabaseHelper.refreshEntity<Workshiftview>().Where(x => x.WorkshiftId == SelectedWorkShift.WorkshiftId).ToList();
-                }  
+                    var place = userWorkShift.FirstOrDefault(
+                        x => x.UserId == workShift.UserId
+                    ).Place;
+                    var userPlace = new WorkShiftPlace { WorkShift = workShift, Place = place };
+
+                    userWorkShiftPlace.Add(userPlace);
+                }
+                UsersInWorkShift = userWorkShiftPlace;
             });
 
             this.WhenAnyValue(x => x.SelectedWorkShift).Subscribe(_ =>

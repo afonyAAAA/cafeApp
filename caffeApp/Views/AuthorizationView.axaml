@@ -11,7 +11,7 @@
 			 x:DataType="vm:AuthorizationViewModel">
 
 	<UserControl.Background>
-		<SolidColorBrush Color="LightYellow"/>
+		<SolidColorBrush Color="Yellow"/>
 	</UserControl.Background>
 
 	<UserControl.Styles>
@@ -25,13 +25,14 @@
 		VerticalAlignment="Center"
 		HorizontalAlignment="Center"
 		Width="200">
-		
+
 		<TextBlock
 			HorizontalAlignment="Center"
-			Classes="h1"
-			Margin="0 20"
-			Text="Авторизация"
-		/>
+			FontWeight="SemiBold"
+			FontSize="25"
+			Classes="Sub">
+			Вход
+		</TextBlock>
 		
 		<TextBlock 
 			Margin="0 5"
@@ -52,6 +53,7 @@
 		/>
 		
 		<Button
+			Classes="N"
 			HorizontalAlignment="Center"
 			Margin="0 20"
 			Command="{Binding SubmitCommand}"

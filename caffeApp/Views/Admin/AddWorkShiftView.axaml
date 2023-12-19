@@ -6,133 +6,177 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="800"
              x:DataType="vm:AddWorkShiftViewModel"
              x:Class="caffeApp.Views.Admin.AddWorkShiftView">
 
 	<UserControl.Styles>
 		<StyleInclude Source="/Designer/Styles/AppStyles.axaml"></StyleInclude>
 	</UserControl.Styles>
+
+	<UserControl.Background>
+		<SolidColorBrush Color="Yellow"/>
+	</UserControl.Background>
 	
 	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition></ColumnDefinition>
-			<ColumnDefinition></ColumnDefinition>
-		</Grid.ColumnDefinitions>
+		<ScrollViewer>
+			<StackPanel Margin="20">
+				<StackPanel Margin="0 10">
+					<TextBlock
+						Classes="Sub"
+						HorizontalAlignment="Center"
+						Margin="0 15">
+						Создание смены
+					</TextBlock>
 
-		<StackPanel
-			VerticalAlignment="Center"
-			HorizontalAlignment="Center"
-			Margin="10">
-			<TextBlock 
-				Classes="h1"
-				HorizontalAlignment="Center"
-				Margin="0 15">
-				Создание смены
-			</TextBlock>
+					<StackPanel Margin="0 10" Orientation="Horizontal">
+						<TextBlock VerticalAlignment="Center">Дата</TextBlock>
+						<DatePicker
+							Margin="0 0"
+							VerticalAlignment="Center"
+							Classes="N"
+							SelectedDate="{Binding SelectedDate}"
+							>
+						</DatePicker>
+					</StackPanel>
 
-			<TextBlock>Дата</TextBlock>
-			<DatePicker 
-				
-				SelectedDate="{Binding SelectedDate}"
-				Margin="0 10">
-			</DatePicker>
-			<TextBlock>Время начала</TextBlock>
-			<TimePicker
-				ClockIdentifier="24HourClock"
-				SelectedTime="{Binding SelectedTimeStart}"
-				Margin="0 10">
-			</TimePicker>
-			<TextBlock>Время конца</TextBlock>
-			<TimePicker
-				ClockIdentifier="24HourClock"
-				SelectedTime="{Binding SelectedTimeEnd}"
-				Margin="0 10">
-			</TimePicker>
+					
+					<StackPanel Orientation="Horizontal">
+						<TextBlock VerticalAlignment="Center">
+							Время начала
+						</TextBlock>
+						<TimePicker
+							Classes="N"
+							VerticalAlignment="Center"
+							ClockIdentifier="24HourClock"
+							SelectedTime="{Binding SelectedTimeStart}"
+							Margin="0 0 10 0">
+						</TimePicker>
+						
+						<TextBlock VerticalAlignment="Center">Время конца</TextBlock>
+						<TimePicker
+							Classes="N"
+							ClockIdentifier="24HourClock"
+							SelectedTime="{Binding SelectedTimeEnd}"
+							Margin="0 0 10 0">
+						</TimePicker>
+					</StackPanel>
 
-			<Button 
-				HorizontalAlignment="Center"
-				Command="{Binding Submit}"
-				Margin="0 10">
-				Подтвердить
-			</Button>
-		</StackPanel>
+					<StackPanel Margin="0 10 10 0" Orientation="Horizontal">
+						<TextBlock VerticalAlignment="Center">Место обслуживания</TextBlock>
+						<ComboBox 
+							SelectedItem="{Binding SelectedPlace}"
+							ItemsSource="{Binding Places}"
+							Margin="10 0 0 0">
+							<ComboBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding Number}"></TextBlock>
+								</DataTemplate>
+							</ComboBox.ItemTemplate>
+						</ComboBox>
+						
+						<Button
+							Command="{Binding SavePlace}"
+							Margin="10 0"
+							VerticalAlignment="Center"
+							Height="35"
+							Width="85"
+							Classes="N">
+							<TextBlock FontSize="11">Применить</TextBlock>
+						</Button>
+						
+					</StackPanel>
 
-		<StackPanel Grid.Column="1"
-			VerticalAlignment="Center"
-			HorizontalAlignment="Center"
-			Margin="10">
-			<TextBlock
-				Classes="h1"
-				HorizontalAlignment="Center"
-				Margin="0 15">
-				Сотрудники на смену
-			</TextBlock>
+					<StackPanel Margin="0 10 10 0" Orientation="Horizontal">
+						<TextBlock VerticalAlignment="Center">Выбранный пользователь:</TextBlock>
+						<TextBlock Text=" "></TextBlock>
+						<TextBlock Text="{Binding SelectedFromSelectedUsers.UserId}"></TextBlock>
+						<TextBlock Text=" "></TextBlock>
+						<TextBlock Text="{Binding SelectedFromSelectedUsers.FirstName}"></TextBlock>
+					</StackPanel>
+					
+					<StackPanel Margin="0 10 10 0" Orientation="Horizontal">
+						<TextBlock VerticalAlignment="Center">Выбранное место обслуживания:</TextBlock>
+						<TextBlock Text="{Binding SelectedPlaceUser.Number}"></TextBlock>
+					</StackPanel>
 
-			<Grid Grid.Column="1">
-				<Grid.RowDefinitions>
-					<RowDefinition></RowDefinition>
-					<RowDefinition></RowDefinition>
-				</Grid.RowDefinitions>
 
-				<StackPanel Grid.Row="0">
-					<DataGrid
-						IsReadOnly="True"
-						Height="150"
-						CanUserReorderColumns="True"
-						CanUserResizeColumns="True"
-						CanUserSortColumns="False"
-						GridLinesVisibility="All"
-						BorderThickness="1" BorderBrush="Gray"
-						SelectedItem="{Binding SelectedFromAllUsers}"
-						ItemsSource="{Binding Users}">
-						<DataGrid.Columns>
-							<DataGridTextColumn Binding="{Binding FirstName}" Header="Фамилия"></DataGridTextColumn>
-							<DataGridTextColumn Binding="{Binding SecondName}" Header="Имя"></DataGridTextColumn>
-							<DataGridTextColumn Binding="{Binding Surname}" Header="Отчетсво"></DataGridTextColumn>
-							<DataGridTextColumn Binding="{Binding Role.Name}" Header="Роль"></DataGridTextColumn>
-						</DataGrid.Columns>
-					</DataGrid>
+				</StackPanel> 
 
-					<Button 
-						Command="{Binding AddUserShift}"
-						Margin="0 10"
-						HorizontalAlignment="Center">
-						Добавить
-					</Button>
+
+				<StackPanel
+					Margin="0 10"
+					VerticalAlignment="Center"
+					Orientation="Horizontal">
+					<StackPanel>
+						<DataGrid
+							Classes="N"
+							IsReadOnly="True"
+							Height="150"
+							CanUserReorderColumns="True"
+							CanUserResizeColumns="True"
+							CanUserSortColumns="False"
+							GridLinesVisibility="All"
+							BorderThickness="1" BorderBrush="Gray"
+							SelectedItem="{Binding SelectedFromAllUsers}"
+							ItemsSource="{Binding Users}">
+							<DataGrid.Columns>
+								<DataGridTextColumn Binding="{Binding FirstName}" Header="Фамилия"></DataGridTextColumn>
+								<DataGridTextColumn Binding="{Binding SecondName}" Header="Имя"></DataGridTextColumn>
+								<DataGridTextColumn Binding="{Binding Surname}" Header="Отчетсво"></DataGridTextColumn>
+								<DataGridTextColumn Binding="{Binding Role.Name}" Header="Роль"></DataGridTextColumn>
+							</DataGrid.Columns>
+						</DataGrid>
+
+						<Button
+							Classes="N"
+							Command="{Binding AddUserShift}"
+							Margin="0 10"
+							HorizontalAlignment="Center">
+							Добавить
+						</Button>
+					</StackPanel>
+
+					<TextBlock Text="  "></TextBlock>
+
+					<StackPanel>
+						<DataGrid
+							Classes="N"
+							IsReadOnly="True"
+							Height="150"
+							CanUserReorderColumns="True"
+							CanUserResizeColumns="True"
+							CanUserSortColumns="False"
+							GridLinesVisibility="All"
+							BorderThickness="1" BorderBrush="Gray"
+							SelectedItem="{Binding SelectedFromSelectedUsers}"
+							ItemsSource="{Binding SelectedUsers}">
+							<DataGrid.Columns>
+								<DataGridTextColumn Binding="{Binding FirstName}" Header="Фамилия"></DataGridTextColumn>
+								<DataGridTextColumn Binding="{Binding SecondName}" Header="Имя"></DataGridTextColumn>
+								<DataGridTextColumn Binding="{Binding Surname}" Header="Отчетсво"></DataGridTextColumn>
+								<DataGridTextColumn Binding="{Binding Role.Name}" Header="Роль"></DataGridTextColumn>
+							</DataGrid.Columns>
+						</DataGrid>
+
+						<Button
+							Classes="N"
+							Command="{Binding DeleteUserShift}"
+							Margin="0 10"
+							HorizontalAlignment="Center">
+							Удалить
+						</Button>
+					</StackPanel>
 				</StackPanel>
 				
-				<StackPanel Grid.Row="1">
-					<DataGrid
-					    IsReadOnly="True"
-						Height="150"
-						Margin="0 15"
-					    CanUserReorderColumns="True"
-						CanUserResizeColumns="True"
-						CanUserSortColumns="False"
-						GridLinesVisibility="All"
-						BorderThickness="1" BorderBrush="Gray"
-						SelectedItem="{Binding SelectedFromSelectedUsers}"
-						ItemsSource="{Binding SelectedUsers}">
-						<DataGrid.Columns>
-							<DataGridTextColumn Binding="{Binding FirstName}" Header="Фамилия"></DataGridTextColumn>
-							<DataGridTextColumn Binding="{Binding SecondName}" Header="Имя"></DataGridTextColumn>
-							<DataGridTextColumn Binding="{Binding Surname}" Header="Отчетсво"></DataGridTextColumn>
-							<DataGridTextColumn Binding="{Binding Role.Name}" Header="Роль"></DataGridTextColumn>
-						</DataGrid.Columns>
-					</DataGrid>
-
-					<Button
-						Command="{Binding DeleteUserShift}"
-						Margin="0 10"
-						HorizontalAlignment="Center">
-						Удалить
-					</Button>
-				</StackPanel>
-
-			</Grid>
-			
-		</StackPanel>
+				<Button
+					Classes="N"
+					Command="{Binding Submit}"
+					Margin="0 10">
+					Подтвердить
+				</Button>
+			</StackPanel>
+		</ScrollViewer>
 	</Grid>
 	
 </rxui:ReactiveUserControl>

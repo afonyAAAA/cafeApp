@@ -1,5 +1,4 @@
 ﻿using caffeApp.Desktop;
-using caffeApp.models;
 using caffeApp.Sources;
 using caffeApp.utils;
 using caffeApp.ViewModels.Waiter;
@@ -15,6 +14,8 @@ using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using caffeApp.models.local;
+using caffeApp.models;
 
 namespace caffeApp.ViewModels
 {
@@ -24,29 +25,37 @@ namespace caffeApp.ViewModels
         public override IScreen HostScreen { get; set; }
         public override ViewModelActivator Activator { get; set; }
 
-        private ObservableCollection<Ordersview> _orders;
         private readonly User authorizedUser = UserHelper.getAuthorizedUserInfo();
+
+        private ObservableCollection<Ordersview> _orders;
         private ObservableCollection<Workshift> _workshifts;
         private ObservableCollection<Workshiftview> _workShiftsUser;
         private ObservableCollection<Foodorder> _foodorders;
         private ObservableCollection<Statusorder> _statusesOrder;
+        private ObservableCollection<SplitFood> _splitFoods;
         private Ordersview _selectedOrderView;
         private Workshift _selectedWorkShift;
         private Statusorder _selectedStatusOrder;
         private bool _isOrderPayed;
         private bool _isPaymentAction;
+        private bool _isCheckAction;
         public bool _isAdmin;
         private bool _isWaiter;
         private bool _isSheff;
         private bool _isCreditCard;
         private bool _isCash;
-        private ObservableCollection<SplitFood> _splitFoods;
         private bool _isSelectedOrder = false;
+        private User _waiterUser;
+        private Payment _createdPayment;
 
         public ReactiveCommand<Unit, Unit> OpenAddOrderView { get; }
         public ReactiveCommand<Unit, Unit> OpenAddOrderForUpdateView { get; }
+        public ReactiveCommand<Unit, Unit> SubmitUpdateStatusOrder { get; }
         public ReactiveCommand<Unit, Unit> PaymentCommand { get; }
         public ReactiveCommand<Unit, Unit> SubmitPayment { get; }
+        public ReactiveCommand<Unit, Unit> UnselectOrder { get; }
+        public ReactiveCommand<Unit, Unit> HideCheck { get; }
+        public ReactiveCommand<Unit, Unit> HidePayment { get; }
 
         public ObservableCollection<Ordersview> Orders {
             get
@@ -59,7 +68,7 @@ namespace caffeApp.ViewModels
                     return new ObservableCollection<Ordersview>(orders);
                 }else if (IsSheff)
                 {
-                    orders = orders.Where(x => x.Status == "Принят" || x.Status == "Готовится").ToList();
+                    orders = orders.Where(x => x.StatusOrder == "Принят" || x.StatusOrder == "Готовится").ToList();
                     return new ObservableCollection<Ordersview>(orders);
                 }
                
@@ -143,6 +152,21 @@ namespace caffeApp.ViewModels
             set => this.RaiseAndSetIfChanged(ref _isOrderPayed, value);
         }
 
+        public bool IsCheckAction {
+            get => _isCheckAction; 
+            set => this.RaiseAndSetIfChanged(ref _isCheckAction, value);
+        }
+
+        public User WaiterUser {
+            get => _waiterUser; 
+            set => this.RaiseAndSetIfChanged(ref _waiterUser, value);
+        }
+
+        public Payment CreatedPayment {
+            get => _createdPayment;
+            set => this.RaiseAndSetIfChanged(ref _createdPayment, value);
+        }
+
         public OrdersViewModel(IScreen screen)
         {
             Activator = new();
@@ -190,12 +214,12 @@ namespace caffeApp.ViewModels
 
                     if(sameFood == -1)
                     {
-                        SplitFoods.Add(new SplitFood(food.Food.Name, 1));
+                        SplitFoods.Add(new SplitFood(food.Food.Name, 1, food.Food.Price));
                     }
                     else
                     {
                         var currentFood = SplitFoods[sameFood];
-                        SplitFoods[sameFood] = new(currentFood.Name, ++currentFood.Count);
+                        SplitFoods[sameFood] = new(currentFood.Name, ++currentFood.Count, currentFood.Sum + food.Food.Price);
                     }
                     ++counter;
                 }
@@ -212,11 +236,7 @@ namespace caffeApp.ViewModels
                 IsSelectedOrder = true;
             });
 
-            this.WhenAnyValue(x => x.SelectedStatusOrder).WhereNotNull().Subscribe(x => {
-                UpdateStatusOrder();
-            });
-
-            //Userworkshift = DatabaseHelper.refreshEntity<>
+            var canUpdateStatusOrder = this.WhenAnyValue(x => x.SelectedStatusOrder).Select(x => x != null);
 
             PaymentCommand = ReactiveCommand.Create(() =>
             {
@@ -236,6 +256,25 @@ namespace caffeApp.ViewModels
                 HostScreen.Router.Navigate.Execute(new AddOrderViewModel(HostScreen, SelectedOrderView));
             });
 
+            SubmitUpdateStatusOrder = ReactiveCommand.Create(() => {
+                UpdateStatusOrder();
+            }, canUpdateStatusOrder);
+
+            UnselectOrder = ReactiveCommand.Create(() => {
+                IsSelectedOrder = false;
+            });
+
+            HidePayment = ReactiveCommand.Create(() => {
+                IsCheckAction = false;
+                IsPaymentAction = false;
+                IsSelectedOrder = true;
+            });
+
+            HideCheck = ReactiveCommand.Create(() => {
+                IsCheckAction = false;
+                IsPaymentAction = false;
+                IsSelectedOrder = false;
+            });
         }
 
         private void UpdateStatusOrder()
@@ -293,12 +332,11 @@ namespace caffeApp.ViewModels
 
                     IsPaymentAction = false;
 
-                    var box = MessageBoxManager
-                 .GetMessageBoxStandard("Оплата",
-                    "Оплата прошла успешно",
-                    ButtonEnum.Ok);
+                    CreatedPayment = payment;
 
-                    box.ShowAsync();
+                    WaiterUser = authorizedUser;
+
+                    IsCheckAction = true;
 
                     Orders = DatabaseHelper.refreshEntity<Ordersview>();
                 }

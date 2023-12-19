@@ -19,7 +19,9 @@ public partial class Ordersview
 
     public decimal? Sum { get; set; }
 
-    public string? Status { get; set; }
+    public string? StatusOrder { get; set; }
 
     public int? WorkshiftId { get; set; }
+
+    public string? StatusPayment { get; set; }
 }

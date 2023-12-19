@@ -48,7 +48,7 @@
 			Command="{Binding ChangeStatePanel}"
 			Classes="N"
 			VerticalAlignment="Center"
-			Height="30"
+			Height="35"
 			Width="40"
 			Margin="18">
 			<TextBlock
@@ -74,7 +74,7 @@
 				<Button
 					Command="{Binding ChangeStatePanel}"
 					Classes="N"
-					Height="30">
+					Height="35">
 					<TextBlock
 						FontSize="18"
 						VerticalAlignment="Center"
@@ -92,7 +92,7 @@
 				<Button
 					Command="{Binding ChangeStatePanel}"
 					Classes="N"
-					Height="30">
+					Height="35">
 					<TextBlock
 						FontSize="18"
 						VerticalAlignment="Center"
@@ -108,7 +108,7 @@
 				<Button
 					Command="{Binding ChangeStatePanel}"
 					Classes="N"
-					Height="30">
+					Height="35">
 					<TextBlock
 						FontSize="18"
 						VerticalAlignment="Center"
@@ -119,20 +119,23 @@
 				<Button Classes="N" Content="Главная" Command="{Binding OpenMainWindow}" />
 				<Button Classes="N" Content="Заказы" Command="{Binding OpenOrdersView}" />
 			</StackPanel>
+		
 		</StackPanel>
 
 		<StackPanel
-			IsVisible="{Binding !IsPanelCollapsed}">
-			
-		</StackPanel>
-		<Button
-			Classes="N"
-			Margin="18"
-			IsVisible="{Binding !IsNotAuthorizedUser}"
+			Margin="17"
 			VerticalAlignment="Bottom"
-			Content="Выйти"
-			Command="{Binding LogOut}"
+			IsVisible="{Binding !IsPanelCollapsed}">
+			<Button
+				Classes="N"
+				Margin="0"
+				IsVisible="{Binding !IsNotAuthorizedUser}"
+				VerticalAlignment="Bottom"
+				Content="Выйти"
+				Command="{Binding LogOut}"
 			 />
+		</StackPanel>
+		
 	</Grid>
 
 </Window>

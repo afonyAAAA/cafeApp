@@ -29,8 +29,9 @@
 	</UserControl.Styles>
 	
 	<Grid>
-		<ScrollViewer IsVisible="{Binding !SelectedUserIsVisible}">
+		<ScrollViewer IsVisible="{Binding SelectedUserIsVisible}">
 			<StackPanel 
+				IsVisible="{Binding SelectedUserIsVisible}"
 				Margin="30">
 				<StackPanel.Styles>
 					<Style Selector="StackPanel > :is(Control)">
@@ -45,8 +46,8 @@
 
 				<Image
 					Margin="10"
-					MaxHeight="100"
-					MaxWidth="100"
+					MaxHeight="200"
+					MaxWidth="200"
 					Source="{Binding ImageUser}">
 				</Image>
 				
@@ -89,7 +90,7 @@
 
 				<Button
 					Classes="N"
-					Command="{Binding }"
+					Command="{Binding UnselectUser}"
 					Content="Назад"
 					/>
 			</StackPanel>
@@ -127,7 +128,6 @@
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>
 					</DataGridTemplateColumn>
-
 				</DataGrid.Columns>
 			</DataGrid>
 			<Button
