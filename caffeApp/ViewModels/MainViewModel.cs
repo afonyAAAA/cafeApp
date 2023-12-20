@@ -158,10 +158,6 @@ public class MainViewModel : ReactiveObject, IScreen, IActivatableViewModel, IAu
             () => Router.Navigate.Execute(new UsersViewModel(this))
         );
 
-        OpenReportView = ReactiveCommand.CreateFromObservable(
-            () => Router.Navigate.Execute(new ReportViewModel(this))
-        );
-
         OpenMainWindow = ReactiveCommand.Create(
             () => Router.NavigationStack.Clear()
         );
