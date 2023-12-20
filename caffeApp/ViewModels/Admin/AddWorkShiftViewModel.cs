@@ -398,8 +398,10 @@ namespace caffeApp.ViewModels.Admin
 
         private async Task<bool> CheckDate()
         {
-            DateTime currentDateTime = DateTime.Now;
+            LocalDateTime currentDateTime = LocalDateTime.FromDateTime(DateTime.Now);
             DateTimeOffset lastDate = new DateTimeOffset(new DateTime(currentDateTime.Year, currentDateTime.Month, currentDateTime.Day + 5));
+            
+            LocalDate selectedDate = new LocalDate(SelectedDate.Year, SelectedDate.Month, SelectedDate.Day);
 
             if (SelectedDate == DateTimeOffset.MinValue)
             {
@@ -412,7 +414,7 @@ namespace caffeApp.ViewModels.Admin
 
                 return false;
             }
-            else if(new DateTime(SelectedDate.Year, SelectedDate.Month, SelectedDate.Day, SelectedTimeEnd.Hours, SelectedTimeEnd.Minutes, 0) < currentDateTime)
+            else if(selectedDate < currentDateTime.Date)
             {
                 var box = MessageBoxManager
              .GetMessageBoxStandard("Выбор даты",

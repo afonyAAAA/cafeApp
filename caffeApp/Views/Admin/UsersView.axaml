@@ -131,6 +131,7 @@
 				</DataGrid.Columns>
 			</DataGrid>
 			<Button
+			    Classes="N"
 				Command="{Binding OpenRegistrationView}"
 				HorizontalAlignment="Center">
 				Добавить

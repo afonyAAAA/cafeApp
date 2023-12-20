@@ -40,15 +40,20 @@
 			Classes="Sub"
 	    />
 		<TextBox
+			Classes="N"
+			Watermark="Введите логин"
 			Text="{Binding Login}"
 		/>
 		
 		<TextBlock
-		Margin="0 5"
-		Text="Пароль"
-		Classes="Sub"
+			Margin="0 5"
+			Text="Пароль"
+			Classes="Sub"
 	    />
 		<TextBox
+			PasswordChar="*"
+			Watermark="Введите пароль"
+			Classes="N"
 			Text="{Binding Password}"
 		/>
 		

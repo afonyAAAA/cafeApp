@@ -65,7 +65,7 @@
 							<DataTemplate>
 								<StackPanel Orientation="Horizontal">
 									<TextBlock Text="{Binding Date}"></TextBlock>
-									<TextBlock> </TextBlock>
+									<TextBlock Text=" "></TextBlock>
 									<TextBlock Text="{Binding Timestart}"></TextBlock>
 									<TextBlock>-</TextBlock>
 									<TextBlock Text="{Binding Timeend}"></TextBlock>

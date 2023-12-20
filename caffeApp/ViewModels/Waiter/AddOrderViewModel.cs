@@ -291,7 +291,7 @@ namespace caffeApp.ViewModels.Waiter
                 order.StatusorderId = 1;
                 order.WorkshiftId = workshift.WorkshiftId;
                 order.PaymentId = paymentId;
-                order.UserId = UserHelper.getAuthorizedUserInfo().UserId;
+                order.UserId = userId;
 
                 var context = DbContextProvider.GetContext();
 
