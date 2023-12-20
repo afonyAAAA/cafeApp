@@ -179,7 +179,18 @@
 					<TextBlock
 						VerticalAlignment="Center"
 						HorizontalAlignment="Center">
-						Сохранить
+						Сохранить как Excel
+					</TextBlock>
+				</Button>	
+				<Button
+					Command="{Binding SaveReportAsPdf}"
+					Margin="0 10"
+					HorizontalAlignment="Center"
+					Height="50">
+					<TextBlock
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center">
+						Сохранить как PDF
 					</TextBlock>
 				</Button>
 			</StackPanel>
@@ -187,6 +198,4 @@
 			
 		</StackPanel>
 	</Grid>
-	        
-	
 </rxui:ReactiveUserControl>

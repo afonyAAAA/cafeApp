@@ -12,6 +12,8 @@ using Avalonia.Controls;
 using System.Reactive.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
+using iTextSharp.text.pdf;
+using iTextSharp.text;
 
 namespace caffeApp.ViewModels
 {
@@ -152,6 +154,7 @@ namespace caffeApp.ViewModels
         public ReactiveCommand<Unit, Unit> CreateReportAdmin { get; }
 
         public ReactiveCommand<Unit, Unit> SaveReport { get; }
+        public ReactiveCommand<Unit, Unit> SaveReportAsPdf { get; }
         
 
         public ReportViewModel(IScreen screen)
@@ -233,7 +236,12 @@ namespace caffeApp.ViewModels
 
             SaveReport = ReactiveCommand.CreateFromTask(async () => {
                 var package = await ExportReportInExcel();
-                await SaveFileAsAsync(package);
+                await SaveFileExcelAsAsync(package);
+            });
+
+            SaveReportAsPdf = ReactiveCommand.CreateFromTask(async () => {
+                var package = await ExportReportInExcel();
+                await SaveFileAsPdf(package);
             });
         }
 
@@ -265,9 +273,9 @@ namespace caffeApp.ViewModels
 
             SumPay = listOrdersOfSelectedWorkShift.Sum(x => x.Payment.Sum);
             CountOrders = countOrders;
-            CountIsCash = listOrdersOfSelectedWorkShift.Where(x => (bool)!x.Payment.Isnoncash).Count();
+            CountIsCash = listOrdersOfSelectedWorkShift.Where(x => !x.Payment.Isnoncash ?? false).Count();
             CountIsNotPayedOrders = listOrdersOfSelectedWorkShift.Where(x => x.Payment.Isnoncash == null).Count();
-            CountIsCreditCard = listOrdersOfSelectedWorkShift.Where(x => (bool)x.Payment.Isnoncash).Count();
+            CountIsCreditCard = listOrdersOfSelectedWorkShift.Where(x => x.Payment.Isnoncash ?? false).Count();
             Orders = new(listOrdersOfSelectedWorkShift);
 
 
@@ -335,20 +343,24 @@ namespace caffeApp.ViewModels
 
                         row++;
                     }
-
                     int lastUsedRow = worksheet.Dimension?.End.Row + 1 ?? 1;
 
-                    worksheet.Cells[lastUsedRow++, 1].Value = "Количество заказов";
-                    worksheet.Cells[lastUsedRow++, 1].Value = "Количество заказов оплаченных наличными";
-                    worksheet.Cells[lastUsedRow++, 1].Value = "Количество заказов оплаченных картой";
-                    worksheet.Cells[lastUsedRow++, 1].Value = "Количество не оплаченных заказов";
-                    worksheet.Cells[lastUsedRow++, 1].Value = "Общая сумма средств за заказы (выручка)";
+                    int lastUsedRowForSub = lastUsedRow;
 
-                    worksheet.Cells[lastUsedRow++, 2].Value = CountOrders;
-                    worksheet.Cells[lastUsedRow++, 2].Value = CountIsCash;
-                    worksheet.Cells[lastUsedRow++, 2].Value = CountIsCreditCard;
-                    worksheet.Cells[lastUsedRow++, 2].Value = CountIsNotPayedOrders;
-                    worksheet.Cells[lastUsedRow++, 2].Value = SumPay.ToString() + " руб.";
+
+                    worksheet.Cells[++lastUsedRowForSub, 1].Value = "Количество заказов";
+                    worksheet.Cells[++lastUsedRowForSub, 1].Value = "Количество заказов оплаченных наличными";
+                    worksheet.Cells[++lastUsedRowForSub, 1].Value = "Количество заказов оплаченных картой";
+                    worksheet.Cells[++lastUsedRowForSub, 1].Value = "Количество не оплаченных заказов";
+                    worksheet.Cells[++lastUsedRowForSub, 1].Value = "Общая сумма средств за заказы (выручка)";
+
+                    lastUsedRowForSub = lastUsedRow;
+
+                    worksheet.Cells[++lastUsedRowForSub, 2].Value = CountOrders;
+                    worksheet.Cells[++lastUsedRowForSub, 2].Value = CountIsCash;
+                    worksheet.Cells[++lastUsedRowForSub, 2].Value = CountIsCreditCard;
+                    worksheet.Cells[++lastUsedRowForSub, 2].Value = CountIsNotPayedOrders;
+                    worksheet.Cells[++lastUsedRowForSub, 2].Value = SumPay + " руб.";
 
                     package.Save();
 
@@ -369,7 +381,7 @@ namespace caffeApp.ViewModels
         }
 
         [Obsolete]
-        private async Task SaveFileAsAsync(ExcelPackage package)
+        private async Task SaveFileExcelAsAsync(ExcelPackage package)
         {
             try
             {
@@ -443,6 +455,80 @@ namespace caffeApp.ViewModels
             return null;
         }
 
+        private async Task SaveFileAsPdf(ExcelPackage package)
+        {
+            try
+            {
+                var saveFileDialog = new SaveFileDialog
+                {
+                    Title = "Save PDF File",
+                    DefaultExtension = "pdf",
+                    Filters = new List<FileDialogFilter>
+            {
+                new FileDialogFilter { Name = "PDF Files", Extensions = new List<string> { "pdf" } }
+            }
+                };
+
+                var result = await saveFileDialog.ShowAsync(new Window());
+
+                if (result != null)
+                {
+                    // Создаем поток для сохранения Excel-файла
+                    using (var stream = new MemoryStream())
+                    {
+                        // Сохраняем Excel-файл в поток
+                        package.SaveAs(stream);
+
+                        // Создаем PDF из потока
+                        using (var pdfStream = new MemoryStream())
+                        {
+                            var document = new iTextSharp.text.Document();
+                            var writer = PdfWriter.GetInstance(document, pdfStream);
+                            document.Open();
+
+                            // Читаем Excel-файл из потока
+                            stream.Position = 0;
+                            var excelPackage = new ExcelPackage(stream);
+
+                            foreach (var sheet in excelPackage.Workbook.Worksheets)
+                            {
+                                // Добавляем каждый лист Excel в PDF
+                                var pdfTable = new PdfPTable(sheet.Dimension.End.Column);
+                                for (int i = 1; i <= sheet.Dimension.End.Column; i++)
+                                {
+                                    pdfTable.AddCell(new Phrase(sheet.Cells[1, i].Text));
+                                }
+
+                                for (int row = 2; row <= sheet.Dimension.End.Row; row++)
+                                {
+                                    for (int col = 1; col <= sheet.Dimension.End.Column; col++)
+                                    {
+                                        var cellText = sheet.Cells[row, col].Text;
+
+                                        // Создаем ячейку PDF и добавляем текст из Excel-ячейки
+                                        var pdfCell = new PdfPCell();
+                                        pdfCell.AddElement(new Phrase(cellText));
+                                        pdfTable.AddCell(pdfCell);
+                                    }
+                                }
+
+                                document.Add(pdfTable);
+                            }
+
+                            document.Close();
+
+                            // Сохраняем PDF-файл
+                            
+                            File.WriteAllBytes(result, pdfStream.ToArray());
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        }
         private string? CreateReportOfWaiter()
         {
             Orders = DatabaseHelper.refreshEntity<Order>(

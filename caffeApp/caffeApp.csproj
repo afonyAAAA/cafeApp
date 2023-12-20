@@ -50,4 +50,8 @@
       <DependentUpon>ReportView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="command\" />
+  </ItemGroup>
 </Project>
