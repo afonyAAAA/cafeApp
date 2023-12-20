@@ -85,7 +85,7 @@ public partial class CafeContext : DbContext
 
             entity.HasOne(d => d.Food).WithMany(p => p.Foodorders)
                 .HasForeignKey(d => d.FoodId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_food");
         });
 
@@ -110,22 +110,22 @@ public partial class CafeContext : DbContext
 
             entity.HasOne(d => d.Place).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.PlaceId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_place");
 
             entity.HasOne(d => d.Statusorder).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.StatusorderId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_statusorder");
 
             entity.HasOne(d => d.User).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_user");
 
             entity.HasOne(d => d.Workshift).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.WorkshiftId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_workshift");
         });
 
@@ -164,7 +164,7 @@ public partial class CafeContext : DbContext
 
             entity.HasOne(d => d.Statuspayment).WithMany(p => p.Payments)
                 .HasForeignKey(d => d.StatuspaymentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_statuspayment");
         });
 
@@ -248,7 +248,7 @@ public partial class CafeContext : DbContext
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_role");
         });
 
@@ -264,12 +264,12 @@ public partial class CafeContext : DbContext
 
             entity.HasOne(d => d.User).WithMany(p => p.Userworkshifts)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.ClientNoAction)
                 .HasConstraintName("fk_user");
 
             entity.HasOne(d => d.Workshift).WithMany(p => p.Userworkshifts)
                 .HasForeignKey(d => d.WorkshiftId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.ClientNoAction)
                 .HasConstraintName("fk_workshift");
         });
 

@@ -48,6 +48,7 @@
 		Classes="Sub"
 	    />
 		<TextBox
+			PasswordChar="*"
 			Text="{Binding Password}"
 		/>
 		

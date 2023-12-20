@@ -304,13 +304,6 @@ namespace caffeApp.ViewModels.Admin
                     context.Update(user);
                     context.SaveChanges();
 
-                    var box = MessageBoxManager
-                    .GetMessageBoxStandard("Регистрация",
-                    "Пользователь создан!",
-                            ButtonEnum.Ok);
-
-                    var result = await box.ShowAsync();
-
                     await HostScreen.Router.Navigate.Execute(new UsersViewModel(HostScreen));
                 }
                 catch (Exception ex)

@@ -486,6 +486,11 @@ namespace caffeApp.ViewModels
                             var writer = PdfWriter.GetInstance(document, pdfStream);
                             document.Open();
 
+
+                            string ttf = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "ARIAL.TTF");
+                            var baseFont = BaseFont.CreateFont(ttf, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+                            var font = new iTextSharp.text.Font(baseFont, iTextSharp.text.Font.DEFAULTSIZE);
+
                             // Читаем Excel-файл из потока
                             stream.Position = 0;
                             var excelPackage = new ExcelPackage(stream);
@@ -496,7 +501,7 @@ namespace caffeApp.ViewModels
                                 var pdfTable = new PdfPTable(sheet.Dimension.End.Column);
                                 for (int i = 1; i <= sheet.Dimension.End.Column; i++)
                                 {
-                                    pdfTable.AddCell(new Phrase(sheet.Cells[1, i].Text));
+                                    pdfTable.AddCell(new Phrase(sheet.Cells[1, i].Text, font));
                                 }
 
                                 for (int row = 2; row <= sheet.Dimension.End.Row; row++)
@@ -507,7 +512,7 @@ namespace caffeApp.ViewModels
 
                                         // Создаем ячейку PDF и добавляем текст из Excel-ячейки
                                         var pdfCell = new PdfPCell();
-                                        pdfCell.AddElement(new Phrase(cellText));
+                                        pdfCell.AddElement(new Phrase(cellText, font));
                                         pdfTable.AddCell(pdfCell);
                                     }
                                 }
